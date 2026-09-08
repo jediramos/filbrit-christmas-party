@@ -1,69 +1,196 @@
-import Image from "next/image";
+import { CountdownTimer } from "@/components/CountdownTimer";
+import { EmailSignup } from "@/components/EmailSignup";
+import { StagesTimeline } from "@/components/StagesTimeline";
+import {
+  eventConfig,
+  formatEventDate,
+  formatEventTime,
+  getActiveStage,
+} from "@/config/event";
 
 export default function Home() {
+  const active = getActiveStage(eventConfig.stages);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="page-shell">
+      {/* Hero — brand + headline + countdown + CTA */}
+      <header className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden section-pad py-16">
+        <div
+          className="hero-glow pointer-events-none absolute left-1/2 top-[18%] h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--crimson)]/20 blur-3xl"
+          aria-hidden="true"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+          <p className="hero-brand font-display text-4xl tracking-[0.08em] text-[var(--gold)] sm:text-6xl md:text-7xl">
+            {eventConfig.orgName}
+          </p>
+
+          <div className="hero-rule mt-5 h-px w-24 bg-[var(--gold)]/70 sm:w-32" />
+
+          <h1 className="hero-title mt-6 font-display text-3xl font-semibold text-[var(--ivory)] sm:text-5xl md:text-6xl">
+            {eventConfig.eventName}
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
+
+          <p className="hero-tagline mt-4 max-w-xl text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
+            {eventConfig.tagline}
+          </p>
+
+          <div className="hero-countdown mt-10 w-full">
+            <p className="mb-4 text-[0.7rem] uppercase tracking-[0.22em] text-[var(--mist)]">
+              Countdown to the night
+            </p>
+            <CountdownTimer targetIso={eventConfig.eventStart} />
+          </div>
+
+          <div className="hero-cta mt-10 flex flex-col items-center gap-3">
             <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href={eventConfig.ticketUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 items-center justify-center bg-[var(--gold)] px-8 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--evergreen-deep)] transition hover:bg-[var(--ivory)]"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              {active
+                ? `Get ${active.name} tickets — ${active.price}`
+                : "Get tickets"}
+            </a>
+            {active && (
+              <p className="text-sm text-[var(--mist)]">
+                {active.name} is live now
+              </p>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* When / where */}
+      <section
+        id="details"
+        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        aria-labelledby="details-heading"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <h2
+            id="details-heading"
+            className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
+          >
+            When & where
+          </h2>
+          <p className="mt-3 text-[var(--mist)]">
+            Mark the date — doors open before the main evening begins.
+          </p>
+
+          <dl className="mt-10 grid gap-8 text-left sm:grid-cols-2">
+            <div>
+              <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
+                Date
+              </dt>
+              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                {formatEventDate(eventConfig.eventStart)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
+                Time
+              </dt>
+              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                {formatEventTime(eventConfig.eventStart)}
+              </dd>
+              <dd className="mt-1 text-sm text-[var(--mist)]">
+                Doors {eventConfig.doorsOpen}
+              </dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
+                Venue
+              </dt>
+              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                {eventConfig.venue}
+              </dd>
+              <dd className="mt-1 text-base text-[var(--ivory-soft)]">
+                {eventConfig.address}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {/* Release stages */}
+      <section
+        id="tickets"
+        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        aria-labelledby="tickets-heading"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <h2
+            id="tickets-heading"
+            className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
+          >
+            Ticket releases
+          </h2>
+          <p className="mt-3 text-[var(--mist)]">
+            Earlier stages unlock better prices and exclusive perks.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        <div className="mt-12">
+          <StagesTimeline stages={eventConfig.stages} />
+        </div>
+
+        <div className="mt-12 text-center">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={eventConfig.ticketUrl}
             target="_blank"
             rel="noopener noreferrer"
+            className="inline-flex min-h-12 items-center justify-center border border-[var(--gold)] px-8 text-sm font-medium uppercase tracking-[0.16em] text-[var(--gold)] transition hover:bg-[var(--gold)] hover:text-[var(--evergreen-deep)]"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            Buy tickets
           </a>
         </div>
-      </main>
+      </section>
+
+      {/* Email signup */}
+      <section
+        id="updates"
+        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        aria-labelledby="updates-heading"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <h2
+            id="updates-heading"
+            className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
+          >
+            Stay in the loop
+          </h2>
+        </div>
+        <div className="mt-8">
+          <EmailSignup blurb={eventConfig.signupBlurb} />
+        </div>
+      </section>
+
+      <footer className="section-pad border-t border-[var(--pine-line)]/60 py-10">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+          <p className="font-display text-xl text-[var(--gold)]">
+            {eventConfig.orgName}
+          </p>
+          <nav className="flex gap-5" aria-label="Social links">
+            {eventConfig.socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[var(--mist)] transition hover:text-[var(--ivory)]"
+              >
+                {s.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+        <p className="mt-6 text-center text-xs text-[var(--mist)]">
+          © {new Date().getFullYear()} {eventConfig.orgName}. All rights
+          reserved.
+        </p>
+      </footer>
     </div>
   );
 }

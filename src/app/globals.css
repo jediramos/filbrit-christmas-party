@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --evergreen: #0c2e24;
+  --evergreen-deep: #071a14;
+  --night: #0a1420;
+  --pine-line: #1f4a3a;
+  --crimson: #9b1d2e;
+  --crimson-soft: #c43b4a;
+  --gold: #c9a227;
+  --gold-dim: #8a7020;
+  --ivory: #f3ebe0;
+  --ivory-soft: #d9cfc0;
+  --mist: #8fa094;
+  --background: var(--night);
+  --foreground: var(--ivory);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* Atmospheric page backdrop */
+.page-shell {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(155, 29, 46, 0.28), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% 30%, rgba(12, 46, 36, 0.85), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 70%, rgba(201, 162, 39, 0.08), transparent 45%),
+    linear-gradient(165deg, var(--night) 0%, var(--evergreen-deep) 45%, var(--evergreen) 100%);
+  min-height: 100vh;
+}
+
+.page-shell::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  background-image:
+    repeating-linear-gradient(
+      -18deg,
+      transparent,
+      transparent 11px,
+      rgba(255, 255, 255, 0.015) 11px,
+      rgba(255, 255, 255, 0.015) 12px
+    );
+}
+
+/* Hero motion */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes shimmer-line {
+  from {
+    transform: scaleX(0.4);
+    opacity: 0.4;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.hero-brand {
+  animation: fade-up 0.8s ease-out both;
+}
+
+.hero-title {
+  animation: fade-up 0.9s ease-out 0.12s both;
+}
+
+.hero-tagline {
+  animation: fade-up 0.9s ease-out 0.22s both;
+}
+
+.hero-countdown {
+  animation: fade-up 1s ease-out 0.32s both;
+}
+
+.hero-cta {
+  animation: fade-up 1s ease-out 0.42s both;
+}
+
+.hero-glow {
+  animation: soft-pulse 4.5s ease-in-out infinite;
+}
+
+.hero-rule {
+  transform-origin: center;
+  animation: shimmer-line 1.2s ease-out 0.5s both;
+}
+
+.stage-badge {
+  display: inline-block;
+  background: var(--gold);
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+}
+
+.countdown-unit {
+  transition: transform 0.2s ease;
+}
+
+.section-pad {
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-pad {
+    padding-inline: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-brand,
+  .hero-title,
+  .hero-tagline,
+  .hero-countdown,
+  .hero-cta,
+  .hero-glow,
+  .hero-rule {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }

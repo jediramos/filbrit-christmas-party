@@ -31,9 +31,9 @@ export const eventConfig: EventConfig = {
   eventName: "Christmas Party 2026",
   tagline:
     "An evening of music, food, and festive cheer with the FilBrit community.",
-  venue: "The Grand Hall",
-  address: "42 King’s Cross Road, London WC1X 9XX",
-  eventStart: "2026-12-19T19:00:00+00:00",
+  venue: "Hotel Cromwell",
+  address: "High Street, Stevenage, SG1 3AZ",
+  eventStart: "2026-12-06T19:00:00+00:00",
   doorsOpen: "18:30",
   ticketUrl: "https://www.eventbrite.com/",
   socials: [

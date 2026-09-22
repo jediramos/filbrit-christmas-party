@@ -16,14 +16,14 @@ export function StagesTimeline({ stages }: Props) {
   }, []);
 
   return (
-    <ol className="stages-list space-y-0 text-left">
+    <ol className="stages-list w-full min-w-0 max-w-full space-y-0 text-left">
       {stages.map((stage) => {
         const status = getStageStatus(stage, now);
 
         return (
           <li
             key={stage.id}
-            className={`stage-item relative border-l-2 pl-6 pb-10 last:pb-0 ${
+            className={`stage-item relative min-w-0 border-l-2 pl-6 pb-10 last:pb-0 ${
               status === "current"
                 ? "border-[var(--gold)]"
                 : "border-[var(--pine-line)]"
@@ -40,9 +40,9 @@ export function StagesTimeline({ stages }: Props) {
               aria-hidden="true"
             />
 
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
               <h3
-                className={`font-display text-2xl sm:text-3xl ${
+                className={`break-words font-display text-2xl sm:text-3xl ${
                   status === "past"
                     ? "text-[var(--mist)]"
                     : "text-[var(--ivory)]"
@@ -50,42 +50,44 @@ export function StagesTimeline({ stages }: Props) {
               >
                 {stage.name}
               </h3>
-              <span className="font-display text-xl text-[var(--gold)]">
+              <span className="break-words font-display text-xl text-[var(--gold)]">
                 {stage.price}
               </span>
               {status === "current" && (
-                <span className="stage-badge text-[0.65rem] uppercase tracking-[0.18em] text-[var(--evergreen-deep)]">
+                <span className="stage-badge shrink-0 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--evergreen-deep)]">
                   On sale now
                 </span>
               )}
               {status === "past" && (
-                <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[var(--mist)]">
+                <span className="shrink-0 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--mist)]">
                   Closed
                 </span>
               )}
               {status === "upcoming" && (
-                <span className="text-[0.65rem] uppercase tracking-[0.18em] text-[var(--crimson-soft)]">
+                <span className="shrink-0 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--crimson-soft)]">
                   Coming up
                 </span>
               )}
             </div>
 
-            <p className="mt-1 text-sm text-[var(--mist)]">{stage.dateLabel}</p>
+            <p className="mt-1 break-words text-sm text-[var(--mist)]">
+              {stage.dateLabel}
+            </p>
             <p
-              className={`mt-3 max-w-xl text-base leading-relaxed ${
+              className={`mt-3 max-w-full break-words text-base leading-relaxed sm:max-w-xl ${
                 status === "past" ? "text-[var(--mist)]" : "text-[var(--ivory-soft)]"
               }`}
             >
               {stage.description}
             </p>
-            <ul className="mt-4 space-y-1.5">
+            <ul className="mt-4 min-w-0 space-y-1.5">
               {stage.prizes.map((prize) => (
                 <li
                   key={prize}
-                  className="flex items-start gap-2 text-sm text-[var(--ivory-soft)]"
+                  className="flex min-w-0 items-start gap-2 text-sm text-[var(--ivory-soft)]"
                 >
                   <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--gold)]" />
-                  {prize}
+                  <span className="min-w-0 break-words">{prize}</span>
                 </li>
               ))}
             </ul>

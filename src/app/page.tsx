@@ -67,30 +67,30 @@ export default function Home() {
           </h2>
           <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
 
-          <dl className="mt-10 flex w-max max-w-full flex-col gap-8 self-center text-left">
-            <div className="flex flex-col gap-8 sm:flex-row sm:gap-16">
-              <div>
+          <dl className="mt-10 flex w-max min-w-0 max-w-full flex-col gap-8 self-center text-left">
+            <div className="flex min-w-0 flex-col gap-8 sm:flex-row sm:gap-16">
+              <div className="min-w-0">
                 <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
                   Date
                 </dt>
-                <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                <dd className="mt-2 break-words font-display text-2xl text-[var(--ivory)]">
                   {formatEventDate(eventConfig.eventStart)}
                 </dd>
               </div>
-              <div>
+              <div className="min-w-0">
                 <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
                   Time
                 </dt>
-                <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                <dd className="mt-2 break-words font-display text-2xl text-[var(--ivory)]">
                   {eventConfig.eventTime}
                 </dd>
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
                 Venue
               </dt>
-              <dd className="mt-2 max-w-xl font-display text-2xl text-[var(--ivory)]">
+              <dd className="mt-2 max-w-xl break-words font-display text-2xl text-[var(--ivory)]">
                 {eventConfig.venue}
               </dd>
             </div>
@@ -113,7 +113,7 @@ export default function Home() {
           </h2>
           <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
 
-          <div className="mt-12 w-max max-w-3xl self-center text-left">
+          <div className="mt-12 w-max min-w-0 max-w-full self-center text-left">
             <StagesTimeline stages={eventConfig.stages} />
           </div>
         </div>

@@ -1,6 +1,6 @@
-# FilBrit Christmas Party
+# Stevenage FilBrit Christmas Party
 
-Promotional landing page for FilBrit’s Christmas party: live countdown, date-driven ticket release stages, static venue details, and email signup.
+Promotional landing page for Stevenage FilBrit’s Christmas party: live countdown, date-driven ticket release stages, static venue details, and email signup.
 
 ## Stack
 

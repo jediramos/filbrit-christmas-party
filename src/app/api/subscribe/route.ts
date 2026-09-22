@@ -34,7 +34,7 @@ export async function POST(request: Request) {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, _subject: "FilBrit Christmas Party signup" }),
+        body: JSON.stringify({ email, _subject: "Stevenage FilBrit Christmas Party signup" }),
       });
 
       if (!res.ok) {

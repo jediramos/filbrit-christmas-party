@@ -99,33 +99,54 @@ body {
   }
 }
 
+@keyframes digit-reel {
+  from {
+    opacity: 0.35;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes separator-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .hero-brand {
-  animation: fade-up 0.8s ease-out both;
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .hero-title {
-  animation: fade-up 0.9s ease-out 0.12s both;
+  animation: fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 .hero-tagline {
-  animation: fade-up 0.9s ease-out 0.22s both;
+  animation: fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
 .hero-countdown {
-  animation: fade-up 1s ease-out 0.32s both;
+  animation: fade-up 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
 }
 
 .hero-cta {
-  animation: fade-up 1s ease-out 0.42s both;
+  animation: fade-up 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both;
 }
 
 .hero-glow {
-  animation: soft-pulse 4.5s ease-in-out infinite;
+  animation: soft-pulse 5.5s ease-in-out infinite;
 }
 
 .hero-rule {
   transform-origin: center;
-  animation: shimmer-line 1.2s ease-out 0.5s both;
+  animation: shimmer-line 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
 .stage-badge {
@@ -136,7 +157,15 @@ body {
 }
 
 .countdown-unit {
-  transition: transform 0.2s ease;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.countdown-digit-reel {
+  animation: digit-reel 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.countdown-separator {
+  animation: separator-breathe 2s ease-in-out infinite;
 }
 
 .section-pad {
@@ -156,7 +185,9 @@ body {
   .hero-countdown,
   .hero-cta,
   .hero-glow,
-  .hero-rule {
+  .hero-rule,
+  .countdown-digit-reel,
+  .countdown-separator {
     animation: none;
   }
 

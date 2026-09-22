@@ -15,13 +15,13 @@ const body = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "FilBrit Christmas Party 2026",
+  title: "Stevenage FilBrit Christmas Party 2026",
   description:
-    "Join FilBrit for a festive Christmas party — early bird tickets, countdown, and event updates.",
+    "Join Stevenage FilBrit for a festive Christmas party — countdown, ticket releases, and event updates.",
   openGraph: {
-    title: "FilBrit Christmas Party 2026",
+    title: "Stevenage FilBrit Christmas Party 2026",
     description:
-      "An evening of music, food, and festive cheer with the FilBrit community.",
+      "An evening of music, food, and festive cheer with the Stevenage FilBrit community.",
     type: "website",
   },
 };

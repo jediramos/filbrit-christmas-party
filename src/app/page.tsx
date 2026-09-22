@@ -18,7 +18,7 @@ export default function Home() {
         />
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <p className="hero-brand font-display text-4xl tracking-[0.08em] text-[var(--gold)] sm:text-6xl md:text-7xl">
+          <p className="hero-brand font-display text-3xl tracking-[0.06em] text-[var(--gold)] sm:text-5xl md:text-6xl">
             {eventConfig.orgName}
           </p>
 
@@ -52,43 +52,45 @@ export default function Home() {
         </div>
       </header>
 
-      {/* When / where */}
+      {/* When / Where */}
       <section
         id="details"
         className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
         aria-labelledby="details-heading"
       >
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <h2
             id="details-heading"
             className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
           >
-            When & where
+            When & Where
           </h2>
           <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
 
-          <dl className="mt-10 grid gap-8 text-left sm:grid-cols-2">
-            <div>
-              <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
-                Date
-              </dt>
-              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
-                {formatEventDate(eventConfig.eventStart)}
-              </dd>
+          <dl className="mt-10 flex w-max max-w-full flex-col gap-8 self-center text-left">
+            <div className="flex flex-col gap-8 sm:flex-row sm:gap-16">
+              <div>
+                <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
+                  Date
+                </dt>
+                <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                  {formatEventDate(eventConfig.eventStart)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
+                  Time
+                </dt>
+                <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+                  {eventConfig.eventTime}
+                </dd>
+              </div>
             </div>
             <div>
-              <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
-                Time
-              </dt>
-              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
-                {eventConfig.eventTime}
-              </dd>
-            </div>
-            <div className="sm:col-span-2">
               <dt className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--gold)]">
                 Venue
               </dt>
-              <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
+              <dd className="mt-2 max-w-xl font-display text-2xl text-[var(--ivory)]">
                 {eventConfig.venue}
               </dd>
             </div>
@@ -102,18 +104,18 @@ export default function Home() {
         className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
         aria-labelledby="tickets-heading"
       >
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <h2
             id="tickets-heading"
             className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
           >
-            Ticket releases
+            Ticket Releases
           </h2>
           <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
-        </div>
 
-        <div className="mt-12">
-          <StagesTimeline stages={eventConfig.stages} />
+          <div className="mt-12 w-max max-w-3xl self-center text-left">
+            <StagesTimeline stages={eventConfig.stages} />
+          </div>
         </div>
       </section>
 
@@ -128,10 +130,10 @@ export default function Home() {
             id="updates-heading"
             className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
           >
-            Stay in the loop
+            Stay in the Loop
           </h2>
           <p className="mt-6 text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
-            Ticket sales are handled by email for now. If you&apos;re interested
+            Ticket sales are handled by email. If you&apos;re interested
             in purchasing tickets, please email{" "}
             <a
               href={ticketEmailMailto}

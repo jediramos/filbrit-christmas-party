@@ -30,20 +30,21 @@ export type EventConfig = {
  * Stage highlighting and the countdown are derived at runtime from these dates.
  */
 export const eventConfig: EventConfig = {
-  orgName: "FilBrit",
+  orgName: "Stevenage FilBrit",
   eventName: "Christmas Party 2026",
   tagline:
     "Bringing back our popular Christmas party event — an evening of music and fun, a three-course meal, festive cultural dances and performances, raffle draws, and more.",
   venue: "Location will be provided once tickets have been confirmed",
   address: "",
+  // Sunday 6 December 2026, 18:30 Europe/London (GMT / UTC+0 in December)
   eventStart: "2026-12-06T18:30:00+00:00",
   eventTime: "18:30 – 23:00",
   doorsOpen: "18:30",
   ticketUrl: "https://www.eventbrite.com/",
   contactEmail: "stevenagefilbritc@gmail.com",
   socials: [
-    { label: "Instagram", href: "https://instagram.com/" },
-    { label: "Facebook", href: "https://facebook.com/" },
+    { label: "Instagram", href: "https://www.instagram.com/stevenagefilbrit/" },
+    { label: "Facebook", href: "https://www.facebook.com/stevenagefilbritcommunity" },
   ],
   signupBlurb:
     "If you're interested in purchasing tickets, please email stevenagefilbritc@gmail.com.",
@@ -54,7 +55,7 @@ export const eventConfig: EventConfig = {
       startsAt: "2026-09-15T00:00:00+00:00",
       endsAt: "2026-10-31T23:59:59+00:00",
       price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE",
+      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
       description: "PLACEHOLDER DESCRIPTION",
       prizes: ["PLACEHOLDER DESCRIPTION"],
     },
@@ -64,7 +65,7 @@ export const eventConfig: EventConfig = {
       startsAt: "2026-11-01T00:00:00+00:00",
       endsAt: "2026-11-30T23:59:59+00:00",
       price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE",
+      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
       description: "PLACEHOLDER DESCRIPTION",
       prizes: ["PLACEHOLDER DESCRIPTION"],
     },
@@ -74,7 +75,7 @@ export const eventConfig: EventConfig = {
       startsAt: "2026-12-01T00:00:00+00:00",
       endsAt: "2026-12-18T23:59:59+00:00",
       price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE",
+      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
       description: "PLACEHOLDER DESCRIPTION",
       prizes: ["PLACEHOLDER DESCRIPTION"],
     },
@@ -124,6 +125,7 @@ export function formatEventDate(iso: string): string {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Europe/London",
   });
 }
 
@@ -131,6 +133,7 @@ export function formatEventTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Europe/London",
     timeZoneName: "short",
   });
 }

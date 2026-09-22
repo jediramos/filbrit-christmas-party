@@ -16,7 +16,7 @@ export function StagesTimeline({ stages }: Props) {
   }, []);
 
   return (
-    <ol className="stages-list mx-auto max-w-3xl space-y-0">
+    <ol className="stages-list space-y-0 text-left">
       {stages.map((stage) => {
         const status = getStageStatus(stage, now);
 

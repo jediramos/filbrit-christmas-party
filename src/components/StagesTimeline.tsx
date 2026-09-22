@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  formatStageRange,
-  getStageStatus,
-  type TicketStage,
-} from "@/config/event";
+import { getStageStatus, type TicketStage } from "@/config/event";
 
 type Props = {
   stages: TicketStage[];
@@ -74,9 +70,7 @@ export function StagesTimeline({ stages }: Props) {
               )}
             </div>
 
-            <p className="mt-1 text-sm text-[var(--mist)]">
-              {formatStageRange(stage.startsAt, stage.endsAt)}
-            </p>
+            <p className="mt-1 text-sm text-[var(--mist)]">{stage.dateLabel}</p>
             <p
               className={`mt-3 max-w-xl text-base leading-relaxed ${
                 status === "past" ? "text-[var(--mist)]" : "text-[var(--ivory-soft)]"

@@ -4,6 +4,7 @@ export type TicketStage = {
   startsAt: string; // ISO 8601
   endsAt: string;
   price: string;
+  dateLabel: string;
   description: string;
   prizes: string[];
 };
@@ -15,8 +16,10 @@ export type EventConfig = {
   venue: string;
   address: string;
   eventStart: string;
+  eventTime: string;
   doorsOpen: string;
   ticketUrl: string;
+  contactEmail: string;
   socials: { label: string; href: string }[];
   signupBlurb: string;
   stages: TicketStage[];
@@ -30,53 +33,50 @@ export const eventConfig: EventConfig = {
   orgName: "FilBrit",
   eventName: "Christmas Party 2026",
   tagline:
-    "An evening of music, food, and festive cheer with the FilBrit community.",
-  venue: "Hotel Cromwell",
-  address: "High Street, Stevenage, SG1 3AZ",
-  eventStart: "2026-12-06T19:00:00+00:00",
+    "Bringing back our popular Christmas party event — an evening of music and fun, a three-course meal, festive cultural dances and performances, raffle draws, and more.",
+  venue: "Location will be provided once tickets have been confirmed",
+  address: "",
+  eventStart: "2026-12-06T18:30:00+00:00",
+  eventTime: "18:30 – 23:00",
   doorsOpen: "18:30",
   ticketUrl: "https://www.eventbrite.com/",
+  contactEmail: "stevenagefilbritc@gmail.com",
   socials: [
     { label: "Instagram", href: "https://instagram.com/" },
     { label: "Facebook", href: "https://facebook.com/" },
   ],
   signupBlurb:
-    "Get notified when a new release stage opens, what’s included with each ticket, and last-minute event updates.",
+    "If you're interested in purchasing tickets, please email stevenagefilbritc@gmail.com.",
   stages: [
     {
       id: "early-bird",
       name: "Early Bird",
       startsAt: "2026-09-15T00:00:00+00:00",
       endsAt: "2026-10-31T23:59:59+00:00",
-      price: "£18",
-      description: "Best price — limited early release for FilBrit members and friends.",
-      prizes: [
-        "Priority entry wristband",
-        "Free welcome drink",
-        "Exclusive Early Bird raffle entry",
-      ],
+      price: "PLACEHOLDER PRICE",
+      dateLabel: "PLACEHOLDER DATE",
+      description: "PLACEHOLDER DESCRIPTION",
+      prizes: ["PLACEHOLDER DESCRIPTION"],
     },
     {
       id: "general",
       name: "General Release",
       startsAt: "2026-11-01T00:00:00+00:00",
       endsAt: "2026-11-30T23:59:59+00:00",
-      price: "£25",
-      description: "Standard party ticket with full evening access.",
-      prizes: [
-        "Full evening access",
-        "Complimentary photo booth print",
-        "General raffle entry",
-      ],
+      price: "PLACEHOLDER PRICE",
+      dateLabel: "PLACEHOLDER DATE",
+      description: "PLACEHOLDER DESCRIPTION",
+      prizes: ["PLACEHOLDER DESCRIPTION"],
     },
     {
       id: "final",
       name: "Final Release",
       startsAt: "2026-12-01T00:00:00+00:00",
       endsAt: "2026-12-18T23:59:59+00:00",
-      price: "£30",
-      description: "Last chance tickets before the night — grab them while they last.",
-      prizes: ["Full evening access", "Late-bird lucky dip entry"],
+      price: "PLACEHOLDER PRICE",
+      dateLabel: "PLACEHOLDER DATE",
+      description: "PLACEHOLDER DESCRIPTION",
+      prizes: ["PLACEHOLDER DESCRIPTION"],
     },
   ],
 };

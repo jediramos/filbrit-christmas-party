@@ -1,19 +1,16 @@
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { EmailSignup } from "@/components/EmailSignup";
-import { StagesTimeline } from "@/components/StagesTimeline";
 import {
   eventConfig,
   formatEventDate,
-  formatEventTime,
-  getActiveStage,
 } from "@/config/event";
+import { StagesTimeline } from "@/components/StagesTimeline";
 
 export default function Home() {
-  const active = getActiveStage(eventConfig.stages);
+  const ticketEmailMailto = `mailto:${eventConfig.contactEmail}`;
 
   return (
     <div className="page-shell">
-      {/* Hero — brand + headline + countdown + CTA */}
+      {/* Hero — brand + headline + countdown + description + contact */}
       <header className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden section-pad py-16">
         <div
           className="hero-glow pointer-events-none absolute left-1/2 top-[18%] h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--crimson)]/20 blur-3xl"
@@ -31,10 +28,6 @@ export default function Home() {
             {eventConfig.eventName}
           </h1>
 
-          <p className="hero-tagline mt-4 max-w-xl text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
-            {eventConfig.tagline}
-          </p>
-
           <div className="hero-countdown mt-10 w-full">
             <p className="mb-4 text-[0.7rem] uppercase tracking-[0.22em] text-[var(--mist)]">
               Countdown to the night
@@ -42,23 +35,20 @@ export default function Home() {
             <CountdownTimer targetIso={eventConfig.eventStart} />
           </div>
 
-          <div className="hero-cta mt-10 flex flex-col items-center gap-3">
+          <p className="hero-tagline mt-10 max-w-xl text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
+            {eventConfig.tagline}
+          </p>
+
+          <p className="hero-cta mt-8 max-w-lg text-base leading-relaxed text-[var(--ivory)] sm:text-lg">
+            If you&apos;re interested in purchasing tickets, please email{" "}
             <a
-              href={eventConfig.ticketUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center bg-[var(--gold)] px-8 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--evergreen-deep)] transition hover:bg-[var(--ivory)]"
+              href={ticketEmailMailto}
+              className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
             >
-              {active
-                ? `Get ${active.name} tickets — ${active.price}`
-                : "Get tickets"}
+              {eventConfig.contactEmail}
             </a>
-            {active && (
-              <p className="text-sm text-[var(--mist)]">
-                {active.name} is live now
-              </p>
-            )}
-          </div>
+            .
+          </p>
         </div>
       </header>
 
@@ -75,9 +65,7 @@ export default function Home() {
           >
             When & where
           </h2>
-          <p className="mt-3 text-[var(--mist)]">
-            Mark the date — doors open before the main evening begins.
-          </p>
+          <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
 
           <dl className="mt-10 grid gap-8 text-left sm:grid-cols-2">
             <div>
@@ -93,10 +81,7 @@ export default function Home() {
                 Time
               </dt>
               <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
-                {formatEventTime(eventConfig.eventStart)}
-              </dd>
-              <dd className="mt-1 text-sm text-[var(--mist)]">
-                Doors {eventConfig.doorsOpen}
+                {eventConfig.eventTime}
               </dd>
             </div>
             <div className="sm:col-span-2">
@@ -105,9 +90,6 @@ export default function Home() {
               </dt>
               <dd className="mt-2 font-display text-2xl text-[var(--ivory)]">
                 {eventConfig.venue}
-              </dd>
-              <dd className="mt-1 text-base text-[var(--ivory-soft)]">
-                {eventConfig.address}
               </dd>
             </div>
           </dl>
@@ -127,28 +109,15 @@ export default function Home() {
           >
             Ticket releases
           </h2>
-          <p className="mt-3 text-[var(--mist)]">
-            Earlier stages unlock better prices and exclusive perks.
-          </p>
+          <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
         </div>
 
         <div className="mt-12">
           <StagesTimeline stages={eventConfig.stages} />
         </div>
-
-        <div className="mt-12 text-center">
-          <a
-            href={eventConfig.ticketUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-12 items-center justify-center border border-[var(--gold)] px-8 text-sm font-medium uppercase tracking-[0.16em] text-[var(--gold)] transition hover:bg-[var(--gold)] hover:text-[var(--evergreen-deep)]"
-          >
-            Buy tickets
-          </a>
-        </div>
       </section>
 
-      {/* Email signup */}
+      {/* Ticket interest */}
       <section
         id="updates"
         className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
@@ -161,9 +130,17 @@ export default function Home() {
           >
             Stay in the loop
           </h2>
-        </div>
-        <div className="mt-8">
-          <EmailSignup blurb={eventConfig.signupBlurb} />
+          <p className="mt-6 text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
+            Ticket sales are handled by email for now. If you&apos;re interested
+            in purchasing tickets, please email{" "}
+            <a
+              href={ticketEmailMailto}
+              className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
+            >
+              {eventConfig.contactEmail}
+            </a>{" "}
+            and we&apos;ll get back to you with details.
+          </p>
         </div>
       </section>
 

@@ -70,7 +70,7 @@ export const eventConfig: EventConfig = {
       price: "£28",
       dateLabel: "September 25th – October 11th",
       description:
-        "Best value tickets for the Christmas party — limited early release for FilBrit members and friends.",
+        "Best value tickets for the Christmas party — limited early release.",
       prizes: [],
     },
     {
@@ -81,7 +81,7 @@ export const eventConfig: EventConfig = {
       price: "£32",
       dateLabel: "October 12th – October 26th",
       description:
-        "Standard party tickets with full evening access once Early Bird has closed.",
+        "Standard party tickets with full evening access.",
       prizes: [],
       hideDetailsUntilStart: true,
     },

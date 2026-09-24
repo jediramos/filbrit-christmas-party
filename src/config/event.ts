@@ -7,6 +7,8 @@ export type TicketStage = {
   dateLabel: string;
   description: string;
   prizes: string[];
+  /** When true, price/dates/copy stay hidden until startsAt. */
+  hideDetailsUntilStart?: boolean;
 };
 
 export type EventConfig = {
@@ -22,20 +24,27 @@ export type EventConfig = {
   contactEmail: string;
   socials: { label: string; href: string }[];
   signupBlurb: string;
+  detailsBlurb: string;
+  ticketsBlurb: string;
   stages: TicketStage[];
 };
 
 /**
  * Static event content. Edit dates/prices/prizes here and redeploy.
  * Stage highlighting and the countdown are derived at runtime from these dates.
+ *
+ * Set to `true` before launch to hide General/Final details until each stage opens.
+ * Leave `false` while debugging so all stage details stay visible.
  */
+export const enforceUpcomingStageLocks = false;
+
 export const eventConfig: EventConfig = {
   orgName: "Stevenage FilBrit",
   eventName: "Christmas Party 2026",
   tagline:
     "Bringing back our popular Christmas party event — an evening of music and fun, a three-course meal, festive cultural dances and performances, raffle draws, and more.",
-  venue: "Location will be provided once tickets have been confirmed",
-  address: "",
+  venue: "Stevenage",
+  address: "Full location will be provided once tickets have been confirmed",
   // Sunday 6 December 2026, 18:30 Europe/London (GMT / UTC+0 in December)
   eventStart: "2026-12-06T18:30:00+00:00",
   eventTime: "18:30 – 23:00",
@@ -47,37 +56,46 @@ export const eventConfig: EventConfig = {
     { label: "Facebook", href: "https://www.facebook.com/stevenagefilbritcommunity" },
   ],
   signupBlurb:
-    "If you're interested in purchasing tickets, please email stevenagefilbritc@gmail.com.",
+    "If you're interested in joining us, please email stevenagefilbritc@gmail.com.",
+  detailsBlurb:
+    "Save the date  — the event starts 18:30, with the celebration running through to 23:00.",
+  ticketsBlurb:
+    "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours.",
   stages: [
     {
       id: "early-bird",
       name: "Early Bird",
-      startsAt: "2026-09-15T00:00:00+00:00",
-      endsAt: "2026-10-31T23:59:59+00:00",
-      price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
-      description: "PLACEHOLDER DESCRIPTION",
-      prizes: ["PLACEHOLDER DESCRIPTION"],
+      startsAt: "2026-09-25T00:00:00+01:00",
+      endsAt: "2026-10-11T23:59:59+01:00",
+      price: "£28",
+      dateLabel: "September 25th – October 11th",
+      description:
+        "Best value tickets for the Christmas party — limited early release for FilBrit members and friends.",
+      prizes: [],
     },
     {
       id: "general",
       name: "General Release",
-      startsAt: "2026-11-01T00:00:00+00:00",
-      endsAt: "2026-11-30T23:59:59+00:00",
-      price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
-      description: "PLACEHOLDER DESCRIPTION",
-      prizes: ["PLACEHOLDER DESCRIPTION"],
+      startsAt: "2026-10-12T00:00:00+01:00",
+      endsAt: "2026-10-26T23:59:59+00:00",
+      price: "£32",
+      dateLabel: "October 12th – October 26th",
+      description:
+        "Standard party tickets with full evening access once Early Bird has closed.",
+      prizes: [],
+      hideDetailsUntilStart: true,
     },
     {
       id: "final",
       name: "Final Release",
-      startsAt: "2026-12-01T00:00:00+00:00",
-      endsAt: "2026-12-18T23:59:59+00:00",
-      price: "PLACEHOLDER PRICE",
-      dateLabel: "PLACEHOLDER DATE - PLACEHOLDER DATE",
-      description: "PLACEHOLDER DESCRIPTION",
-      prizes: ["PLACEHOLDER DESCRIPTION"],
+      startsAt: "2026-11-11T00:00:00+00:00",
+      endsAt: "2026-11-20T23:59:59+00:00",
+      price: "£40",
+      dateLabel: "November 11th – November 20th",
+      description:
+        "Last chance tickets before the night — grab them while they last.",
+      prizes: [],
+      hideDetailsUntilStart: true,
     },
   ],
 };

@@ -40,7 +40,7 @@ export default function Home() {
           </p>
 
           <p className="hero-cta mt-8 max-w-lg text-base leading-relaxed text-[var(--ivory)] sm:text-lg">
-            If you&apos;re interested in purchasing tickets, please email{" "}
+            If you&apos;re interested in joining us, please email{" "}
             <a
               href={ticketEmailMailto}
               className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
@@ -65,7 +65,9 @@ export default function Home() {
           >
             When & Where
           </h2>
-          <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
+          <p className="mt-3 max-w-xl text-[var(--mist)]">
+            {eventConfig.detailsBlurb}
+          </p>
 
           <dl className="mt-10 flex w-max min-w-0 max-w-full flex-col gap-8 self-center text-left">
             <div className="flex min-w-0 flex-col gap-8 sm:flex-row sm:gap-16">
@@ -93,6 +95,9 @@ export default function Home() {
               <dd className="mt-2 max-w-xl break-words font-display text-2xl text-[var(--ivory)]">
                 {eventConfig.venue}
               </dd>
+              <dd className="mt-1 max-w-xl break-words text-base text-[var(--ivory-soft)]">
+                {eventConfig.address}
+              </dd>
             </div>
           </dl>
         </div>
@@ -111,7 +116,9 @@ export default function Home() {
           >
             Ticket Releases
           </h2>
-          <p className="mt-3 text-[var(--mist)]">PLACEHOLDER DESCRIPTION</p>
+          <p className="mt-3 max-w-xl text-[var(--mist)]">
+            {eventConfig.ticketsBlurb}
+          </p>
 
           <div className="mt-12 w-max min-w-0 max-w-full self-center text-left">
             <StagesTimeline stages={eventConfig.stages} />
@@ -134,7 +141,7 @@ export default function Home() {
           </h2>
           <p className="mt-6 text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
             Ticket sales are handled by email. If you&apos;re interested
-            in purchasing tickets, please email{" "}
+            or have any questions, please email{" "}
             <a
               href={ticketEmailMailto}
               className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"

@@ -11,14 +11,14 @@ function Unit({ value, label }: { value: number; label: string }) {
   const display = String(Math.max(0, value)).padStart(2, "0");
 
   return (
-    <div className="countdown-unit flex min-w-[4.25rem] flex-col items-center sm:min-w-[5rem]">
+    <div className="countdown-unit flex min-w-[4.5rem] flex-col items-center sm:min-w-[5.5rem]">
       <span
         key={display}
-        className="countdown-digit-reel font-display text-3xl font-semibold tabular-nums tracking-tight text-[var(--gold)] sm:text-5xl"
+        className="countdown-digit-reel font-display text-4xl font-semibold tabular-nums tracking-tight text-[var(--gold)] sm:text-6xl"
       >
         {display}
       </span>
-      <span className="mt-1 text-[0.65rem] uppercase tracking-[0.2em] text-[var(--mist)] sm:text-xs">
+      <span className="mt-1 text-[0.7rem] uppercase tracking-[0.2em] text-[var(--mist)] sm:text-sm">
         {label}
       </span>
     </div>
@@ -28,7 +28,7 @@ function Unit({ value, label }: { value: number; label: string }) {
 function Separator() {
   return (
     <span
-      className="countdown-separator self-start pt-1 font-display text-3xl text-[var(--gold-dim)] sm:pt-2 sm:text-5xl"
+      className="countdown-separator self-start pt-1 font-display text-4xl text-[var(--gold-dim)] sm:pt-2 sm:text-6xl"
       aria-hidden="true"
     >
       :

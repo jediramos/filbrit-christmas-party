@@ -88,8 +88,10 @@ body {
 }
 
 /*
- * Sun watermark layer: oversized + rotated inner tile so the pattern
- * never drops out at the top of the page after rotation/clipping.
+ * Sun watermark: rotated -18°. On tall mobile pages the tile layer's WIDTH
+ * must grow with page HEIGHT (coverage ≈ W·|cosθ| + H·|sinθ|). Pure % / cqw
+ * sizing is unreliable on some mobile browsers, so --shell-w / --shell-h are
+ * set from measured page-shell scroll size by PageAtmosphere.
  */
 .page-watermark {
   position: absolute;
@@ -104,8 +106,8 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 180%;
-  height: 180%;
+  width: calc(1.3 * var(--shell-w, 100vw) + 0.65 * var(--shell-h, 100vh));
+  height: calc(1.3 * var(--shell-h, 100vh) + 0.65 * var(--shell-w, 100vw));
   opacity: 0.1;
   background-image: url("/ph-sun.svg");
   background-size: 168px 168px;
@@ -113,8 +115,7 @@ body {
   transform: translate(-50%, -50%) rotate(-18deg);
 }
 
-/* One diagonal gold bloom — same -18° language as the sun watermark,
-   soft-faded at the ends so it never reads as a hard edge-to-edge bar */
+/* Diagonal gold bloom — same -18° language; sized from measured shell */
 .page-gold-blur {
   position: absolute;
   inset: 0;
@@ -128,7 +129,7 @@ body {
   position: absolute;
   top: 48%;
   left: 50%;
-  width: 150%;
+  width: calc(1.3 * var(--shell-w, 100vw) + 0.65 * var(--shell-h, 100vh));
   height: min(32vh, 16rem);
   transform: translate(-50%, -50%) rotate(-18deg);
   background: linear-gradient(

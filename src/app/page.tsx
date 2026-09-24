@@ -1,18 +1,17 @@
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { PageAtmosphere } from "@/components/PageAtmosphere";
+import { StagesTimeline } from "@/components/StagesTimeline";
 import {
   eventConfig,
   formatEventDate,
 } from "@/config/event";
-import { StagesTimeline } from "@/components/StagesTimeline";
 
 export default function Home() {
   const ticketEmailMailto = `mailto:${eventConfig.contactEmail}`;
 
   return (
     <div className="page-shell">
-      {/* Full-page sun watermark — separate layer so tiling stays continuous */}
-      <div className="page-watermark" aria-hidden="true" />
-      <div className="page-gold-blur" aria-hidden="true" />
+      <PageAtmosphere />
 
       {/* Hero — brand + headline + countdown + description + contact */}
       <header className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden section-pad py-16">
@@ -86,7 +85,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <h2
             id="details-heading"
-            className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
+            className="font-display text-4xl text-[var(--ivory)] sm:text-5xl"
           >
             When & Where
           </h2>
@@ -137,7 +136,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <h2
             id="tickets-heading"
-            className="font-display text-3xl text-[var(--ivory)] sm:text-4xl"
+            className="font-display text-4xl text-[var(--ivory)] sm:text-5xl"
           >
             Ticket Releases
           </h2>

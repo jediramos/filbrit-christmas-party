@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="#c9a227">
+  <!--
+    Philippine flag sun (stylised for watermark use):
+    solid disc + 8 ray bundles; each bundle has a longer centre ray
+    flanked by two shorter rays.
+  -->
+  <defs>
+    <g id="ray-bundle">
+      <!-- centre (longest) -->
+      <path d="M0 26 L4.5 68 L0 90 L-4.5 68 Z"/>
+      <!-- left flank -->
+      <path d="M-7 28 L-16 58 L-10 68 L-3.5 32 Z"/>
+      <!-- right flank -->
+      <path d="M7 28 L16 58 L10 68 L3.5 32 Z"/>
+    </g>
+  </defs>
+  <g transform="translate(100 100)">
+    <circle r="20"/>
+    <use href="#ray-bundle" transform="rotate(0)"/>
+    <use href="#ray-bundle" transform="rotate(45)"/>
+    <use href="#ray-bundle" transform="rotate(90)"/>
+    <use href="#ray-bundle" transform="rotate(135)"/>
+    <use href="#ray-bundle" transform="rotate(180)"/>
+    <use href="#ray-bundle" transform="rotate(225)"/>
+    <use href="#ray-bundle" transform="rotate(270)"/>
+    <use href="#ray-bundle" transform="rotate(315)"/>
+  </g>
+</svg>

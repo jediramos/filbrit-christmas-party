@@ -16,13 +16,17 @@ export default function Home() {
           className="hero-glow pointer-events-none absolute left-1/2 top-[18%] h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--crimson)]/20 blur-3xl"
           aria-hidden="true"
         />
+        <div
+          className="hero-glow-blue pointer-events-none absolute left-[18%] top-[42%] h-48 w-48 rounded-full bg-[var(--fil-blue)]/25 blur-3xl"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <p className="hero-brand font-display text-3xl tracking-[0.06em] text-[var(--gold)] sm:text-5xl md:text-6xl">
             {eventConfig.orgName}
           </p>
 
-          <div className="hero-rule mt-5 h-px w-24 bg-[var(--gold)]/70 sm:w-32" />
+          <div className="hero-rule mt-5 w-24 sm:w-32" aria-hidden="true" />
 
           <h1 className="hero-title mt-6 font-display text-3xl font-semibold text-[var(--ivory)] sm:text-5xl md:text-6xl">
             {eventConfig.eventName}
@@ -55,7 +59,7 @@ export default function Home() {
       {/* When / Where */}
       <section
         id="details"
-        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        className="section-pad section-rule py-20 sm:py-24"
         aria-labelledby="details-heading"
       >
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
@@ -106,7 +110,7 @@ export default function Home() {
       {/* Release stages */}
       <section
         id="tickets"
-        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        className="section-pad section-rule py-20 sm:py-24"
         aria-labelledby="tickets-heading"
       >
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center text-center">
@@ -129,7 +133,7 @@ export default function Home() {
       {/* Ticket interest */}
       <section
         id="updates"
-        className="section-pad border-t border-[var(--pine-line)]/60 py-20 sm:py-24"
+        className="section-pad section-rule py-20 sm:py-24"
         aria-labelledby="updates-heading"
       >
         <div className="mx-auto max-w-3xl text-center">
@@ -153,7 +157,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="section-pad border-t border-[var(--pine-line)]/60 py-10">
+      <footer className="section-pad section-rule py-10">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
           <p className="font-display text-xl text-[var(--gold)]">
             {eventConfig.orgName}

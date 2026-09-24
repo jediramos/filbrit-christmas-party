@@ -1,17 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --evergreen: #0c2e24;
-  --evergreen-deep: #071a14;
-  --night: #0a1420;
-  --pine-line: #1f4a3a;
+  /* Deep blue night base — soft Filipino flag blue wash */
+  --fil-blue: #0038a8;
+  --fil-blue-soft: #1a4fbf;
+  --fil-blue-mid: #0c2a5c;
+  --fil-blue-deep: #071428;
+  --night: #060e1c;
+  --pine-line: #3a5a8c;
+  /* Kept as aliases so existing components stay coherent on the blue base */
+  --evergreen: var(--fil-blue-mid);
+  --evergreen-deep: var(--fil-blue-deep);
   --crimson: #9b1d2e;
   --crimson-soft: #c43b4a;
   --gold: #c9a227;
+  --gold-bright: #e0b83a;
   --gold-dim: #8a7020;
   --ivory: #f3ebe0;
   --ivory-soft: #d9cfc0;
-  --mist: #8fa094;
+  --mist: #8a96a8;
   --background: var(--night);
   --foreground: var(--ivory);
 }
@@ -37,25 +44,40 @@ body {
   font-family: var(--font-display), Georgia, serif;
 }
 
-/* Atmospheric page backdrop */
+/* Atmospheric page backdrop — soft Filipino flag blue throughout */
 .page-shell {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(155, 29, 46, 0.28), transparent 55%),
-    radial-gradient(ellipse 70% 45% at 100% 30%, rgba(12, 46, 36, 0.85), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 0% 70%, rgba(201, 162, 39, 0.08), transparent 45%),
-    linear-gradient(165deg, var(--night) 0%, var(--evergreen-deep) 45%, var(--evergreen) 100%);
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(155, 29, 46, 0.2), transparent 55%),
+    radial-gradient(ellipse 85% 60% at 50% 35%, rgba(0, 56, 168, 0.38), transparent 65%),
+    radial-gradient(ellipse 70% 50% at 0% 80%, rgba(26, 79, 191, 0.18), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 100% 75%, rgba(201, 162, 39, 0.08), transparent 50%),
+    linear-gradient(
+      165deg,
+      var(--night) 0%,
+      var(--fil-blue-deep) 35%,
+      var(--fil-blue-mid) 70%,
+      #0f3268 100%
+    );
   min-height: 100vh;
+  /* Clip both axes so the rotated sun watermark cannot extend page scroll */
+  overflow: clip;
 }
 
+.page-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Fine diagonal grain */
 .page-shell::before {
   content: "";
   pointer-events: none;
   position: absolute;
   inset: 0;
-  z-index: -1;
-  opacity: 0.35;
+  z-index: 0;
+  opacity: 0.28;
   background-image:
     repeating-linear-gradient(
       -18deg,
@@ -64,6 +86,24 @@ body {
       rgba(255, 255, 255, 0.015) 11px,
       rgba(255, 255, 255, 0.015) 12px
     );
+}
+
+/*
+ * Subtle diagonal watermark — official-style Philippine sun
+ * (disc + 8 triple-ray bundles). Low contrast to stay clean.
+ */
+.page-shell::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  opacity: 0.055;
+  background-image: url("/ph-sun.svg");
+  background-size: 168px 168px;
+  background-repeat: repeat;
+  transform: rotate(-18deg);
+  transform-origin: center;
 }
 
 /* Hero motion */
@@ -144,8 +184,23 @@ body {
   animation: soft-pulse 5.5s ease-in-out infinite;
 }
 
+.hero-glow-blue {
+  animation: soft-pulse 6.5s ease-in-out 1.2s infinite;
+}
+
+/* Slim flag-inspired accent under the brand (blue → ivory → red → gold) */
 .hero-rule {
   transform-origin: center;
+  height: 2px;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    var(--fil-blue-soft) 0%,
+    var(--ivory) 32%,
+    var(--crimson-soft) 64%,
+    var(--gold) 100%
+  );
+  opacity: 0.85;
   animation: shimmer-line 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
@@ -172,6 +227,32 @@ body {
   padding-inline: 1.25rem;
 }
 
+/* Inset horizontal rules between page sections (not full-bleed) */
+.section-rule {
+  position: relative;
+  border-top: none;
+  box-shadow: none;
+}
+
+.section-rule::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+  width: min(calc(100% - 2.5rem), 42rem);
+  height: 1px;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--ivory) 14%, var(--fil-blue-mid) 86%);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--gold) 10%, transparent);
+}
+
+@media (min-width: 640px) {
+  .section-rule::before {
+    width: min(calc(100% - 4rem), 42rem);
+  }
+}
+
 @media (min-width: 640px) {
   .section-pad {
     padding-inline: 2rem;
@@ -185,6 +266,7 @@ body {
   .hero-countdown,
   .hero-cta,
   .hero-glow,
+  .hero-glow-blue,
   .hero-rule,
   .countdown-digit-reel,
   .countdown-separator {

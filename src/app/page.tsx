@@ -10,6 +10,9 @@ export default function Home() {
 
   return (
     <div className="page-shell">
+      {/* Full-page sun watermark — separate layer so tiling stays continuous */}
+      <div className="page-watermark" aria-hidden="true" />
+
       {/* Hero — brand + headline + countdown + description + contact */}
       <header className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden section-pad py-16">
         <div
@@ -17,7 +20,7 @@ export default function Home() {
           aria-hidden="true"
         />
         <div
-          className="hero-glow-blue pointer-events-none absolute left-[18%] top-[42%] h-48 w-48 rounded-full bg-[var(--fil-blue)]/25 blur-3xl"
+          className="hero-glow-green pointer-events-none absolute left-[18%] top-[42%] h-48 w-48 rounded-full bg-[var(--evergreen-mid)]/40 blur-3xl"
           aria-hidden="true"
         />
 
@@ -53,6 +56,28 @@ export default function Home() {
             </a>
             .
           </p>
+
+          <p className="hero-socials mt-6 max-w-md text-sm leading-relaxed text-[var(--mist)]">
+            Follow our socials to keep up with event updates and anything else we
+            host!
+          </p>
+
+          <nav
+            className="hero-socials mt-3 flex items-center justify-center gap-6"
+            aria-label="Social links"
+          >
+            {eventConfig.socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm tracking-[0.08em] text-[var(--mist)] transition hover:text-[var(--gold)]"
+              >
+                {s.label}
+              </a>
+            ))}
+          </nav>
         </div>
       </header>
 

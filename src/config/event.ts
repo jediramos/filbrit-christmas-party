@@ -44,7 +44,7 @@ export const eventConfig: EventConfig = {
   tagline:
     "Bringing back our popular Christmas party event — an evening of music and fun, a three-course meal, festive cultural dances and performances, raffle draws, and more.",
   venue: "Stevenage",
-  address: "Full location will be provided once tickets have been confirmed",
+  address: "Full location will be provided once your tickets have been confirmed.",
   // Sunday 6 December 2026, 18:30 Europe/London (GMT / UTC+0 in December)
   eventStart: "2026-12-06T18:30:00+00:00",
   eventTime: "18:30 – 23:00",
@@ -60,7 +60,7 @@ export const eventConfig: EventConfig = {
   detailsBlurb:
     "Save the date  — the event starts 18:30, with the celebration running through to 23:00.",
   ticketsBlurb:
-    "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours.",
+    "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours now!",
   stages: [
     {
       id: "early-bird",

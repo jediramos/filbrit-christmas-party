@@ -12,18 +12,14 @@ export default function Home() {
     <div className="page-shell">
       {/* Full-page sun watermark — separate layer so tiling stays continuous */}
       <div className="page-watermark" aria-hidden="true" />
+      <div className="page-gold-blur" aria-hidden="true" />
 
       {/* Hero — brand + headline + countdown + description + contact */}
       <header className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden section-pad py-16">
         <div
-          className="hero-glow pointer-events-none absolute left-1/2 top-[18%] h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--crimson)]/20 blur-3xl"
+          className="hero-glow pointer-events-none absolute left-1/2 top-[18%] h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--crimson)]/18 blur-3xl"
           aria-hidden="true"
         />
-        <div
-          className="hero-glow-green pointer-events-none absolute left-[18%] top-[42%] h-48 w-48 rounded-full bg-[var(--evergreen-mid)]/40 blur-3xl"
-          aria-hidden="true"
-        />
-
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
           <p className="hero-brand font-display text-3xl tracking-[0.06em] text-[var(--gold)] sm:text-5xl md:text-6xl">
             {eventConfig.orgName}

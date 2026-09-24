@@ -43,15 +43,15 @@ body {
   font-family: var(--font-display), Georgia, serif;
 }
 
-/* Atmospheric page backdrop — deep royal green throughout */
+/* Atmospheric page backdrop — deep royal green with faint gold edge washes */
 .page-shell {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(155, 29, 46, 0.22), transparent 55%),
-    radial-gradient(ellipse 85% 60% at 50% 35%, rgba(12, 46, 36, 0.55), transparent 65%),
-    radial-gradient(ellipse 70% 50% at 0% 80%, rgba(15, 58, 44, 0.35), transparent 55%),
-    radial-gradient(ellipse 50% 35% at 100% 75%, rgba(201, 162, 39, 0.08), transparent 50%),
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(155, 29, 46, 0.18), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 6% 10%, rgba(201, 162, 39, 0.08), transparent 58%),
+    radial-gradient(ellipse 85% 60% at 50% 40%, rgba(12, 46, 36, 0.5), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 6% 88%, rgba(201, 162, 39, 0.08), transparent 58%),
     linear-gradient(
       165deg,
       var(--night) 0%,
@@ -64,7 +64,7 @@ body {
   overflow: clip;
 }
 
-.page-shell > *:not(.page-watermark) {
+.page-shell > *:not(.page-watermark):not(.page-gold-blur) {
   position: relative;
   z-index: 1;
 }
@@ -106,11 +106,42 @@ body {
   left: 50%;
   width: 180%;
   height: 180%;
-  opacity: 0.06;
+  opacity: 0.1;
   background-image: url("/ph-sun.svg");
   background-size: 168px 168px;
   background-repeat: repeat;
   transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+/* One diagonal gold bloom — same -18° language as the sun watermark,
+   soft-faded at the ends so it never reads as a hard edge-to-edge bar */
+.page-gold-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.page-gold-blur::before {
+  content: "";
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 150%;
+  height: min(32vh, 16rem);
+  transform: translate(-50%, -50%) rotate(-18deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 14%,
+    rgba(201, 162, 39, 0.06) 30%,
+    rgba(224, 184, 58, 0.13) 50%,
+    rgba(201, 162, 39, 0.06) 70%,
+    transparent 86%,
+    transparent 100%
+  );
+  filter: blur(52px);
 }
 
 /* Hero motion */
@@ -195,10 +226,6 @@ body {
   animation: soft-pulse 5.5s ease-in-out infinite;
 }
 
-.hero-glow-green {
-  animation: soft-pulse 6.5s ease-in-out 1.2s infinite;
-}
-
 /* Slim flag-inspired accent under the brand (blue → ivory → red → gold) */
 .hero-rule {
   transform-origin: center;
@@ -254,8 +281,8 @@ body {
   width: min(calc(100% - 2.5rem), 42rem);
   height: 1px;
   transform: translateX(-50%);
-  background: color-mix(in srgb, var(--ivory) 14%, var(--evergreen) 86%);
-  box-shadow: 0 -1px 0 color-mix(in srgb, var(--gold) 10%, transparent);
+  background: color-mix(in srgb, var(--gold) 28%, var(--evergreen) 72%);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--gold) 14%, transparent);
 }
 
 @media (min-width: 640px) {
@@ -278,7 +305,6 @@ body {
   .hero-cta,
   .hero-socials,
   .hero-glow,
-  .hero-glow-green,
   .hero-rule,
   .countdown-digit-reel,
   .countdown-separator {

@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="#c9a227">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="#e0b83a">
   <!--
     Philippine flag sun (stylised for watermark use):
     solid disc + 8 ray bundles; each bundle has a longer centre ray
-    flanked by two shorter rays.
+    flanked by two shorter rays. Bright gold for soft pop on dark green.
   -->
   <defs>
     <g id="ray-bundle">

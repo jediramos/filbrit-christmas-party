@@ -88,10 +88,10 @@ body {
 }
 
 /*
- * Sun watermark: rotated -18°. On tall mobile pages the tile layer's WIDTH
- * must grow with page HEIGHT (coverage ≈ W·|cosθ| + H·|sinθ|). Pure % / cqw
- * sizing is unreliable on some mobile browsers, so --shell-w / --shell-h are
- * set from measured page-shell scroll size by PageAtmosphere.
+ * Sun + parol watermark: rotated -18°.
+ * Suns sit on the 168px grid; gold parols are the same grid offset by half
+ * a cell so they land in the diamond gaps between sun corners.
+ * --shell-w / --shell-h come from PageAtmosphere for tall mobile coverage.
  */
 .page-watermark {
   position: absolute;
@@ -101,18 +101,31 @@ body {
   overflow: hidden;
 }
 
-.page-watermark::before {
+.page-watermark::before,
+.page-watermark::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   width: calc(1.3 * var(--shell-w, 100vw) + 0.65 * var(--shell-h, 100vh));
   height: calc(1.3 * var(--shell-h, 100vh) + 0.65 * var(--shell-w, 100vw));
+  background-repeat: repeat;
+  transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+.page-watermark::before {
   opacity: 0.1;
   background-image: url("/ph-sun.svg");
   background-size: 168px 168px;
-  background-repeat: repeat;
-  transform: translate(-50%, -50%) rotate(-18deg);
+  background-position: 0 0;
+}
+
+.page-watermark::after {
+  opacity: 0.54;
+  background-image: url("/parol-watermark-tile.png");
+  background-size: 168px 168px;
+  /* Half-cell offset → centres land in gaps between suns */
+  background-position: 84px 84px;
 }
 
 /* Diagonal gold bloom — same -18° language; sized from measured shell */
@@ -199,8 +212,14 @@ body {
   }
 }
 
+.hero-logo {
+  animation: fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  border-radius: 0.35rem;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 22%, transparent);
+}
+
 .hero-brand {
-  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
 }
 
 .hero-title {
@@ -299,6 +318,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-logo,
   .hero-brand,
   .hero-title,
   .hero-tagline,

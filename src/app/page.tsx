@@ -20,7 +20,15 @@ export default function Home() {
           aria-hidden="true"
         />
         <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <p className="hero-brand font-display text-3xl tracking-[0.06em] text-[var(--gold)] sm:text-5xl md:text-6xl">
+          <img
+            src="/filbrit-logo.png"
+            alt="Stevenage FilBrit Community"
+            width={112}
+            height={112}
+            className="hero-logo h-20 w-20 object-contain sm:h-24 sm:w-24 md:h-28 md:w-28"
+          />
+
+          <p className="hero-brand mt-5 font-display text-3xl tracking-[0.06em] text-[var(--gold)] sm:mt-6 sm:text-5xl md:text-6xl">
             {eventConfig.orgName}
           </p>
 

@@ -47,7 +47,7 @@ export const eventConfig: EventConfig = {
   address: "Full location will be provided once your tickets have been confirmed.",
   // Sunday 6 December 2026, 18:30 Europe/London (GMT / UTC+0 in December)
   eventStart: "2026-12-06T18:30:00+00:00",
-  eventTime: "18:30 – 23:00",
+  eventTime: "TBC",
   doorsOpen: "18:30",
   ticketUrl: "https://www.eventbrite.com/",
   contactEmail: "stevenagefilbritc@gmail.com",
@@ -58,7 +58,7 @@ export const eventConfig: EventConfig = {
   signupBlurb:
     "If you're interested in joining us, please email stevenagefilbritc@gmail.com.",
   detailsBlurb:
-    "Save the date  — the event starts 18:30, with the celebration running through to 23:00.",
+    "Save the date  — the event timings are to be confirmed.",
   ticketsBlurb:
     "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours now!",
   stages: [

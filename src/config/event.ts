@@ -36,7 +36,7 @@ export type EventConfig = {
  * Set to `true` before launch to hide General/Final details until each stage opens.
  * Leave `false` while debugging so all stage details stay visible.
  */
-export const enforceUpcomingStageLocks = false;
+export const enforceUpcomingStageLocks = true;
 
 export const eventConfig: EventConfig = {
   orgName: "Stevenage FilBrit",

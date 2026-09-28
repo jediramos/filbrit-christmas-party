@@ -67,7 +67,7 @@ export const eventConfig: EventConfig = {
       name: "Early Bird",
       startsAt: "2026-09-25T00:00:00+01:00",
       endsAt: "2026-10-11T23:59:59+01:00",
-      price: "£28",
+      price: "£30",
       dateLabel: "September 25th – October 11th",
       description:
         "Best value tickets for the Christmas party — limited early release.",

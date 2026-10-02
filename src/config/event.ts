@@ -19,6 +19,7 @@ export type EventConfig = {
   address: string;
   eventStart: string;
   eventTime: string;
+  timingNotes: string[];
   doorsOpen: string;
   ticketUrl: string;
   contactEmail: string;
@@ -45,10 +46,11 @@ export const eventConfig: EventConfig = {
     "Bringing back our popular Christmas party event — an evening of music and fun, a three-course meal, festive cultural dances and performances, raffle draws, and more.",
   venue: "Stevenage",
   address: "Full location will be provided once your tickets have been confirmed.",
-  // Sunday 6 December 2026, 18:30 Europe/London (GMT / UTC+0 in December)
-  eventStart: "2026-12-06T18:30:00+00:00",
-  eventTime: "TBC",
-  doorsOpen: "18:30",
+  // Sunday 6 December 2026, 17:00 Europe/London (GMT / UTC+0 in December)
+  eventStart: "2026-12-06T17:00:00+00:00",
+  eventTime: "17:00 – 23:00",
+  timingNotes: ["Guests to arrive by 17:00.", "Programme starts at 18:00."],
+  doorsOpen: "17:00",
   ticketUrl: "https://www.eventbrite.com/",
   contactEmail: "stevenagefilbritc@gmail.com",
   socials: [
@@ -58,7 +60,7 @@ export const eventConfig: EventConfig = {
   signupBlurb:
     "If you're interested in joining us, please email stevenagefilbritc@gmail.com.",
   detailsBlurb:
-    "Save the date  — the event timings are to be confirmed.",
+    "Save the date — we look forward to celebrating with you!",
   ticketsBlurb:
     "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours now!",
   stages: [
@@ -78,8 +80,8 @@ export const eventConfig: EventConfig = {
       name: "General Release",
       startsAt: "2026-10-12T00:00:00+01:00",
       endsAt: "2026-10-26T23:59:59+00:00",
-      price: "£32",
-      dateLabel: "October 12th – October 26th",
+      price: "£35",
+      dateLabel: "October 11th – October 26th",
       description:
         "Standard party tickets with full evening access.",
       prizes: [],
@@ -88,10 +90,10 @@ export const eventConfig: EventConfig = {
     {
       id: "final",
       name: "Final Release",
-      startsAt: "2026-11-11T00:00:00+00:00",
-      endsAt: "2026-11-20T23:59:59+00:00",
+      startsAt: "2026-10-27T00:00:00+00:00",
+      endsAt: "2026-11-06T23:59:59+00:00",
       price: "£40",
-      dateLabel: "November 11th – November 20th",
+      dateLabel: "October 26th – November 6th",
       description:
         "Last chance tickets before the night — grab them while they last.",
       prizes: [],

@@ -118,6 +118,14 @@ export default function Home() {
                 <dd className="mt-2 break-words font-display text-2xl text-[var(--ivory)]">
                   {eventConfig.eventTime}
                 </dd>
+                {eventConfig.timingNotes.map((note) => (
+                  <dd
+                    key={note}
+                    className="mt-1 break-words text-base text-[var(--ivory-soft)]"
+                  >
+                    {note}
+                  </dd>
+                ))}
               </div>
             </div>
             <div className="min-w-0">

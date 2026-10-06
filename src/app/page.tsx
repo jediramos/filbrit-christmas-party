@@ -184,7 +184,7 @@ export default function Home() {
             Stay in the Loop
           </h2>
           <p className="mt-6 text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
-            Have a question about tickets or the night itself? Email{" "}
+            If you wish to pay cash or have any questions about the night itself? Email{" "}
             <a
               href={ticketEmailMailto}
               className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"

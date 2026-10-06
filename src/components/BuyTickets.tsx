@@ -130,6 +130,8 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
     draft?.details ?? EMPTY_BUYER_DETAILS,
   );
   const [errors, setErrors] = useState<DetailsErrors>({});
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
@@ -197,7 +199,18 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
     e.preventDefault();
     const nextErrors = validateBuyerDetails(details);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length === 0) setStep("review");
+    const nextTermsError = termsAccepted
+      ? null
+      : "Please confirm you have read and understood the Terms & Conditions.";
+    setTermsError(nextTermsError);
+    if (Object.keys(nextErrors).length === 0 && !nextTermsError) {
+      setStep("review");
+    }
+  };
+
+  const changeTermsAccepted = (accepted: boolean) => {
+    setTermsAccepted(accepted);
+    if (accepted) setTermsError(null);
   };
 
   return (
@@ -268,6 +281,9 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
             details={details}
             errors={errors}
             onChange={updateDetail}
+            termsAccepted={termsAccepted}
+            termsError={termsError}
+            onTermsChange={changeTermsAccepted}
             onSubmit={submitDetails}
           />
         )}
@@ -459,6 +475,19 @@ function TicketsStep({
           You can buy up to {eventConfig.maxTicketsPerOrder} tickets per order.
         </p>
       )}
+      <p className="mt-4 text-sm leading-relaxed text-[var(--mist)]">
+        Before you continue, please take a moment to read our refund policy,
+        which can be found under section 2 of our{" "}
+        <a
+          href={eventConfig.termsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 hover:decoration-[var(--gold)]"
+        >
+          Terms &amp; Conditions
+        </a>
+        .
+      </p>
     </section>
   );
 }
@@ -492,6 +521,9 @@ type DetailsStepProps = {
   details: Details;
   errors: DetailsErrors;
   onChange: (field: keyof Details, value: string) => void;
+  termsAccepted: boolean;
+  termsError: string | null;
+  onTermsChange: (accepted: boolean) => void;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
 };
 
@@ -513,8 +545,12 @@ function DetailsStep({
   details,
   errors,
   onChange,
+  termsAccepted,
+  termsError,
+  onTermsChange,
   onSubmit,
 }: DetailsStepProps) {
+  const termsId = `${formId}-terms`;
   return (
     <section aria-labelledby="details-step-heading">
       <h3
@@ -576,11 +612,49 @@ function DetailsStep({
             </div>
           );
         })}
+        <div className="border-t border-[var(--pine-line)] pt-4">
+          <div className="flex items-start gap-3">
+            <input
+              id={termsId}
+              name="termsAccepted"
+              type="checkbox"
+              required
+              checked={termsAccepted}
+              onChange={(e) => onTermsChange(e.target.checked)}
+              aria-invalid={Boolean(termsError)}
+              aria-describedby={termsError ? `${termsId}-error` : undefined}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[var(--gold)]"
+            />
+            <label
+              htmlFor={termsId}
+              className="text-sm leading-relaxed text-[var(--ivory-soft)]"
+            >
+              I confirm that I have read and understood the{" "}
+              <a
+                href={eventConfig.termsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 hover:decoration-[var(--gold)]"
+              >
+                Terms &amp; Conditions
+              </a>{" "}
+              of my purchase.{" "}
+              <span className="text-[var(--crimson-soft)]">*</span>
+            </label>
+          </div>
+          {termsError && (
+            <p
+              id={`${termsId}-error`}
+              className="mt-1 text-sm text-[var(--crimson-soft)]"
+            >
+              {termsError}
+            </p>
+          )}
+        </div>
       </form>
       <p className="mt-4 text-sm leading-relaxed text-[var(--mist)]">
-        Once your purchase is complete, a confirmation email including the
-        terms &amp; conditions of your purchase will be sent to the email
-        address above.
+        Once your purchase is complete, a confirmation email including a meal
+        choice form will be sent to the email address above.
       </p>
     </section>
   );

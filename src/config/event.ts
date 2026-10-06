@@ -24,6 +24,8 @@ export type EventConfig = {
   doorsOpen: string;
   ticketUrl: string;
   contactEmail: string;
+  /** Path to the T&Cs PDF, served from `public/`. */
+  termsUrl: string;
   socials: { label: string; href: string }[];
   signupBlurb: string;
   detailsBlurb: string;
@@ -55,6 +57,7 @@ export const eventConfig: EventConfig = {
   doorsOpen: "17:00",
   ticketUrl: "https://www.eventbrite.com/",
   contactEmail: "stevenagefilbritc@gmail.com",
+  termsUrl: "/terms-and-conditions.pdf",
   socials: [
     { label: "Instagram", href: "https://www.instagram.com/stevenagefilbrit/" },
     { label: "Facebook", href: "https://www.facebook.com/stevenagefilbritcommunity" },

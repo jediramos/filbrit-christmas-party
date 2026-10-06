@@ -1,3 +1,4 @@
+import { BuyTickets } from "@/components/BuyTickets";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { PageAtmosphere } from "@/components/PageAtmosphere";
 import { StagesTimeline } from "@/components/StagesTimeline";
@@ -5,6 +6,7 @@ import {
   eventConfig,
   formatEventDate,
 } from "@/config/event";
+import { getStripeMode } from "@/lib/stripe";
 
 export default function Home() {
   const ticketEmailMailto = `mailto:${eventConfig.contactEmail}`;
@@ -50,14 +52,12 @@ export default function Home() {
           </p>
 
           <p className="hero-cta mt-8 max-w-lg text-base leading-relaxed text-[var(--ivory)] sm:text-lg">
-            If you&apos;re interested in joining us, please email{" "}
             <a
-              href={ticketEmailMailto}
-              className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
+              href="#buy-tickets"
+              className="underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:text-[var(--gold)] hover:decoration-[var(--gold)]"
             >
-              {eventConfig.contactEmail}
+              If you&apos;re interested in joining us, get your tickets here.
             </a>
-            .
           </p>
 
           <p className="hero-socials mt-6 max-w-md text-sm leading-relaxed text-[var(--mist)]">
@@ -163,6 +163,10 @@ export default function Home() {
           <div className="mt-12 w-max min-w-0 max-w-full self-center text-left">
             <StagesTimeline stages={eventConfig.stages} />
           </div>
+
+          <div id="buy-tickets" className="mt-12 scroll-mt-[60vh]">
+            <BuyTickets testMode={getStripeMode() === "test"} />
+          </div>
         </div>
       </section>
 
@@ -180,15 +184,14 @@ export default function Home() {
             Stay in the Loop
           </h2>
           <p className="mt-6 text-base leading-relaxed text-[var(--ivory-soft)] sm:text-lg">
-            Ticket sales are handled by email. If you&apos;re interested
-            or have any questions, please email{" "}
+            Have a question about tickets or the night itself? Email{" "}
             <a
               href={ticketEmailMailto}
               className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
             >
               {eventConfig.contactEmail}
             </a>{" "}
-            and we&apos;ll get back to you with details.
+            and we&apos;ll get back to you as soon as we can.
           </p>
         </div>
       </section>

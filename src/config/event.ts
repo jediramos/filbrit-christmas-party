@@ -3,7 +3,8 @@ export type TicketStage = {
   name: string;
   startsAt: string; // ISO 8601
   endsAt: string;
-  price: string;
+  /** Price per ticket in GBP. */
+  price: number;
   dateLabel: string;
   description: string;
   prizes: string[];
@@ -27,6 +28,7 @@ export type EventConfig = {
   signupBlurb: string;
   detailsBlurb: string;
   ticketsBlurb: string;
+  maxTicketsPerOrder: number;
   stages: TicketStage[];
 };
 
@@ -62,14 +64,15 @@ export const eventConfig: EventConfig = {
   detailsBlurb:
     "Save the date — we look forward to celebrating with you!",
   ticketsBlurb:
-    "Tickets are released in stages. Earlier releases offer the best value — email us to reserve yours now!",
+    "Tickets are released in stages, and earlier releases offer the best value — grab yours below while they last!",
+  maxTicketsPerOrder: 10,
   stages: [
     {
       id: "early-bird",
       name: "Early Bird",
       startsAt: "2026-09-25T00:00:00+01:00",
       endsAt: "2026-10-11T23:59:59+01:00",
-      price: "£30",
+      price: 30,
       dateLabel: "September 25th – October 11th",
       description:
         "Best value tickets for the Christmas party — limited early release.",
@@ -80,7 +83,7 @@ export const eventConfig: EventConfig = {
       name: "General Release",
       startsAt: "2026-10-12T00:00:00+01:00",
       endsAt: "2026-10-26T23:59:59+00:00",
-      price: "£35",
+      price: 35,
       dateLabel: "October 11th – October 26th",
       description:
         "Standard party tickets with full evening access.",
@@ -92,7 +95,7 @@ export const eventConfig: EventConfig = {
       name: "Final Release",
       startsAt: "2026-10-27T00:00:00+00:00",
       endsAt: "2026-11-06T23:59:59+00:00",
-      price: "£40",
+      price: 40,
       dateLabel: "October 26th – November 6th",
       description:
         "Last chance tickets before the night — grab them while they last.",
@@ -137,6 +140,16 @@ export function formatStageRange(startsAt: string, endsAt: string): string {
   const start = new Date(startsAt).toLocaleDateString("en-GB", opts);
   const end = new Date(endsAt).toLocaleDateString("en-GB", opts);
   return `${start} – ${end}`;
+}
+
+export function formatPrice(amount: number): string {
+  const fractionDigits = Number.isInteger(amount) ? 0 : 2;
+  return amount.toLocaleString("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
 }
 
 export function formatEventDate(iso: string): string {

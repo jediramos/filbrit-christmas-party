@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   enforceUpcomingStageLocks,
+  formatPrice,
   getStageStatus,
   type TicketStage,
 } from "@/config/event";
@@ -60,7 +61,7 @@ export function StagesTimeline({ stages }: Props) {
               </h3>
               {!detailsLocked && (
                 <span className="break-words font-display text-xl text-[var(--gold)]">
-                  {stage.price}
+                  {formatPrice(stage.price)}
                 </span>
               )}
               {status === "current" && (

@@ -242,13 +242,15 @@ function PaymentsComingSoon({ mailto }: { mailto: string }) {
     <>
       Online payments are not yet supported but will be very shortly, so
       please sit tight! For now, to purchase tickets, please email{" "}
-      <a
-        href={mailto}
-        className="break-all text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
-      >
-        {eventConfig.contactEmail}
-      </a>
-      .
+      <span className="whitespace-nowrap">
+        <a
+          href={mailto}
+          className="text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
+        >
+          {eventConfig.contactEmail}
+        </a>
+        .
+      </span>
     </>
   );
 }

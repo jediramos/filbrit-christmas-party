@@ -60,7 +60,13 @@ function formatOpensOn(iso: string): string {
   });
 }
 
-export function BuyTickets({ testMode }: { testMode: boolean }) {
+export function BuyTickets({
+  testMode,
+  disabled = false,
+}: {
+  testMode: boolean;
+  disabled?: boolean;
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
@@ -85,12 +91,14 @@ export function BuyTickets({ testMode }: { testMode: boolean }) {
     <>
       <button
         type="button"
+        disabled={disabled}
         onClick={() => {
+          if (disabled) return;
           setNow(new Date());
           setOpen(true);
           setHasOpened(true);
         }}
-        className="rounded-full bg-[var(--gold)] px-10 py-3.5 font-display text-lg text-[var(--evergreen-deep)] shadow-[0_0_24px_rgba(201,162,39,0.25)] transition hover:bg-[var(--gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--gold)]"
+        className="rounded-full bg-[var(--gold)] px-10 py-3.5 font-display text-lg text-[var(--evergreen-deep)] shadow-[0_0_24px_rgba(201,162,39,0.25)] transition hover:bg-[var(--gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-[var(--gold)]"
       >
         Buy Tickets
       </button>

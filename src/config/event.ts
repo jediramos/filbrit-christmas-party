@@ -43,6 +43,12 @@ export type EventConfig = {
  */
 export const enforceUpcomingStageLocks = true;
 
+/**
+ * Set to `true` to enable the Buy Tickets button (Stripe checkout).
+ * While `false`, the button is disabled and visitors are asked to email to buy tickets.
+ */
+export const onlinePaymentsEnabled = false;
+
 export const eventConfig: EventConfig = {
   orgName: "Stevenage FilBrit",
   eventName: "Christmas Party 2026",

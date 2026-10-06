@@ -5,6 +5,7 @@ import { StagesTimeline } from "@/components/StagesTimeline";
 import {
   eventConfig,
   formatEventDate,
+  onlinePaymentsEnabled,
 } from "@/config/event";
 import { getStripeMode } from "@/lib/stripe";
 
@@ -52,12 +53,16 @@ export default function Home() {
           </p>
 
           <p className="hero-cta mt-8 max-w-lg text-base leading-relaxed text-[var(--ivory)] sm:text-lg">
-            <a
-              href="#buy-tickets"
-              className="underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:text-[var(--gold)] hover:decoration-[var(--gold)]"
-            >
-              If you&apos;re interested in joining us, get your tickets here.
-            </a>
+            {onlinePaymentsEnabled ? (
+              <a
+                href="#buy-tickets"
+                className="underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:text-[var(--gold)] hover:decoration-[var(--gold)]"
+              >
+                If you&apos;re interested in joining us, get your tickets here.
+              </a>
+            ) : (
+              <PaymentsComingSoon mailto={ticketEmailMailto} />
+            )}
           </p>
 
           <p className="hero-socials mt-6 max-w-md text-sm leading-relaxed text-[var(--mist)]">
@@ -165,7 +170,15 @@ export default function Home() {
           </div>
 
           <div id="buy-tickets" className="mt-12 scroll-mt-[60vh]">
-            <BuyTickets testMode={getStripeMode() === "test"} />
+            <BuyTickets
+              testMode={getStripeMode() === "test"}
+              disabled={!onlinePaymentsEnabled}
+            />
+            {!onlinePaymentsEnabled && (
+              <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-[var(--mist)]">
+                <PaymentsComingSoon mailto={ticketEmailMailto} />
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -221,5 +234,21 @@ export default function Home() {
         </p>
       </footer>
     </div>
+  );
+}
+
+function PaymentsComingSoon({ mailto }: { mailto: string }) {
+  return (
+    <>
+      Online payments are not yet supported but will be very shortly, so
+      please sit tight! For now, to purchase tickets, please email{" "}
+      <a
+        href={mailto}
+        className="break-all text-[var(--gold)] underline decoration-[var(--gold)]/50 underline-offset-4 transition hover:decoration-[var(--gold)]"
+      >
+        {eventConfig.contactEmail}
+      </a>
+      .
+    </>
   );
 }

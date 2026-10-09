@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type Stripe from "stripe";
 import { ClearCheckoutDraft } from "@/components/ClearCheckoutDraft";
+import { OrderCelebration, OrderSmiski } from "@/components/OrderCelebration";
 import { PageAtmosphere } from "@/components/PageAtmosphere";
 import { eventConfig, formatEventDate, formatPrice } from "@/config/event";
 import { orderReference } from "@/lib/order-reference";
@@ -15,6 +16,44 @@ export const metadata: Metadata = {
 type PaidSession = {
   session: Stripe.Checkout.Session;
   lineItems: Stripe.LineItem[];
+};
+
+type ReceiptLine = {
+  id: string;
+  label: string;
+  amount: number;
+};
+
+type SuccessReceipt = {
+  greetingName: string;
+  email: string | null;
+  reference: string;
+  lines: ReceiptLine[];
+  total: number;
+};
+
+function receiptFromPaid(paid: PaidSession): SuccessReceipt {
+  const firstName = paid.session.metadata?.firstName;
+  return {
+    greetingName: firstName ? `, ${firstName}` : "",
+    email: paid.session.customer_details?.email ?? null,
+    reference: orderReference(paid.session.id),
+    lines: paid.lineItems.map((item) => ({
+      id: item.id,
+      label: `${item.quantity} × ${item.description}`,
+      amount: (item.amount_total ?? 0) / 100,
+    })),
+    total: (paid.session.amount_total ?? 0) / 100,
+  };
+}
+
+/** Local-only stand-in so the celebration can be reviewed without a Stripe payment. */
+const previewReceipt: SuccessReceipt = {
+  greetingName: "",
+  email: "you@example.com",
+  reference: "FB-PREVIEW",
+  lines: [{ id: "preview", label: "2 × Early Bird", amount: 60 }],
+  total: 60,
 };
 
 async function loadPaidSession(sessionId: string): Promise<PaidSession | null> {
@@ -37,6 +76,9 @@ export default async function OrderSuccessPage(
   const { session_id } = await props.searchParams;
   const paid =
     typeof session_id === "string" ? await loadPaidSession(session_id) : null;
+  const preview =
+    process.env.NODE_ENV === "development" && session_id === "preview";
+  const receipt = paid ? receiptFromPaid(paid) : preview ? previewReceipt : null;
 
   return (
     <div className="page-shell">
@@ -50,44 +92,49 @@ export default async function OrderSuccessPage(
           className="hero-logo h-16 w-16 object-contain sm:h-20 sm:w-20"
         />
 
-        {paid ? (
+        {receipt ? (
           <>
-            <ClearCheckoutDraft />
+            {paid ? <ClearCheckoutDraft /> : null}
+            <OrderCelebration />
             <h1 className="mt-8 font-display text-4xl text-[var(--ivory)] sm:text-5xl">
-              You&apos;re booked{paid.session.metadata?.firstName ? `, ${paid.session.metadata.firstName}` : ""}!
+              You&apos;re booked{receipt.greetingName}!
             </h1>
             <p className="mt-4 max-w-md text-[var(--ivory-soft)]">
               Thank you for your order. A receipt is on its way to{" "}
               <span className="text-[var(--gold)]">
-                {paid.session.customer_details?.email}
+                {receipt.email}
               </span>
               .
             </p>
 
-            <div className="mt-10 w-full max-w-md rounded-md border border-[var(--pine-line)] bg-[var(--evergreen-deep)]/70 p-5 text-left">
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--mist)]">
-                Order reference
-              </p>
-              <p className="mt-1 font-display text-2xl text-[var(--gold)]">
-                {orderReference(paid.session.id)}
-              </p>
-              <ul className="mt-4 space-y-2 border-t border-[var(--pine-line)] pt-4">
-                {paid.lineItems.map((item) => (
-                  <li key={item.id} className="flex justify-between gap-4 text-sm">
-                    <span className="text-[var(--ivory-soft)]">
-                      {item.quantity} × {item.description}
-                    </span>
-                    <span className="tabular-nums text-[var(--ivory)]">
-                      {formatPrice(item.amount_total / 100)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-3 flex justify-between border-t border-[var(--pine-line)] pt-3">
-                <span className="font-display text-lg text-[var(--ivory)]">Total paid</span>
-                <span className="font-display text-lg text-[var(--gold)]">
-                  {formatPrice((paid.session.amount_total ?? 0) / 100)}
-                </span>
+            <div className="relative mt-10 w-full max-w-md">
+              <OrderSmiski side="left" />
+              <OrderSmiski side="right" />
+              <div className="w-full rounded-md border border-[var(--pine-line)] bg-[var(--evergreen-deep)]/70 p-5 text-left">
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--mist)]">
+                  Order reference
+                </p>
+                <p className="mt-1 font-display text-2xl text-[var(--gold)]">
+                  {receipt.reference}
+                </p>
+                <ul className="mt-4 space-y-2 border-t border-[var(--pine-line)] pt-4">
+                  {receipt.lines.map((item) => (
+                    <li key={item.id} className="flex justify-between gap-4 text-sm">
+                      <span className="text-[var(--ivory-soft)]">
+                        {item.label}
+                      </span>
+                      <span className="tabular-nums text-[var(--ivory)]">
+                        {formatPrice(item.amount)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-3 flex justify-between border-t border-[var(--pine-line)] pt-3">
+                  <span className="font-display text-lg text-[var(--ivory)]">Total paid</span>
+                  <span className="font-display text-lg text-[var(--gold)]">
+                    {formatPrice(receipt.total)}
+                  </span>
+                </div>
               </div>
             </div>
 

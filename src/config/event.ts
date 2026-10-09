@@ -47,7 +47,7 @@ export const enforceUpcomingStageLocks = true;
  * Set to `true` to enable the Buy Tickets button (Stripe checkout).
  * While `false`, the button is disabled and visitors are asked to email to buy tickets.
  */
-export const onlinePaymentsEnabled = false;
+export const onlinePaymentsEnabled = true;
 
 export const eventConfig: EventConfig = {
   orgName: "Stevenage FilBrit",

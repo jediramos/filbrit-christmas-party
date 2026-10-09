@@ -1,3 +1,4 @@
+import path from "node:path";
 import {
   eventConfig,
   formatEventDate,
@@ -9,29 +10,60 @@ import type { PaidOrder } from "@/lib/order-email";
  * ─── EDIT THE EMAIL WORDING HERE ──────────────────────────────────────────
  * This is the email buyers receive after paying. Change any text below and
  * redeploy. `{firstName}` is replaced with the buyer's first name.
- * The order summary, event date/time and order reference are added
- * automatically between the intro and the terms.
+ * The order summary is added automatically after the intro, and the event
+ * date/time come from `src/config/event.ts`.
+ *
+ * Keep this consistent with the T&Cs (public/terms-and-conditions.pdf) and the
+ * information pack (src/emails/attachments/information-pack.pdf), which are
+ * both attached to the email.
  */
 const content = {
   subject: "Your tickets for the Stevenage FilBrit Christmas Party 2026",
   greeting: "Hi {firstName},",
   intro: [
-    "Thank you for buying tickets to our Christmas Party! We're so happy you'll be celebrating with us.",
-    "Here's a summary of your order. Please keep this email — you may be asked for your order reference on the night.",
+    "Thank you for purchasing tickets to the Stevenage FilBrit Christmas Party! Maligayang Pasko! We're so happy you're celebrating with us.",
+    "Here's a summary of your order. Please keep this email – you may be asked to show your email confirmation at the door.",
   ],
-  afterSummary: [
-    "We'll email you the full venue address and any other details closer to the date.",
+  mealForm: {
+    heading: "Meal choice form",
+    url: "https://forms.gle/KKLqwQPxmQhh27B97",
+    before:
+      "Please fill out your Meal Choice form as soon as possible. The deadline for submission is Friday 6th of November.",
+    after: [
+      "Let us know if there are any allergies or dietary requirements we need to be aware of so we can feed this back to the catering staff.",
+      "If you or any of your group have any accessibility requirements, please let us know too, either via email or within the form.",
+    ],
+  },
+  eventHeading: "Event details",
+  dressCode:
+    "Formal attire – suits / cocktail dresses. We highly encourage any and all traditional / cultural wear!",
+  venueLines: ["Cromwell Hotel", "Old Town, Stevenage", "SG1 3AZ"],
+  afterDetails: [
+    "Parking is free for all guests, but car parking is limited so it is first come, first served. Please remember to register your car at Reception. The car park is located at the back of the hotel – a map is included in the attached information pack.",
+    "This car park is not supervised. Stevenage FilBrit and Cromwell Hotel are not responsible for any losses of property or damage to vehicles whilst on the premises.",
+    "The venue holds a bar where guests are able to purchase drinks throughout the night. Alcoholic drinks can only be purchased, served and consumed by over 18s. Please remember to bring valid ID. No outside alcohol is allowed onto the premises.",
+    "On the day, please show this confirmation email for organisers to be able to quickly confirm your attendance.",
+    "Please find attached the Terms & Conditions for the event and a printable information pack.",
   ],
-  termsHeading: "Terms & conditions",
-  terms: [
-    "Tickets are non-refundable unless the event is cancelled or postponed.",
-    "If the event is postponed, your tickets will be valid for the new date.",
-    "Please bring this email or your order reference with you on the night.",
-    "Tickets may not be resold.",
-    "By attending, you agree that photos and videos taken at the event may be shared on our social media.",
+  socialsIntro:
+    "Follow us on our socials to get the latest news on the Christmas Party as we announce any updates or special announcements.",
+  signOff: [
+    "Thank you for joining us for our FilBrit Christmas Party! We can't wait to celebrate with you!",
+    "Maraming Salamat po,",
+    "Stevenage FilBrit",
   ],
-  signOff: ["See you there!", "Stevenage FilBrit"],
 };
+
+const attachments = [
+  {
+    filename: "Stevenage FilBrit Christmas Party 2026 - Terms and Conditions.pdf",
+    path: path.join(process.cwd(), "public", "terms-and-conditions.pdf"),
+  },
+  {
+    filename: "Stevenage FilBrit Christmas Party 2026 - Information Pack.pdf",
+    path: path.join(process.cwd(), "src", "emails", "attachments", "information-pack.pdf"),
+  },
+];
 /* ───────────────────────────────────────────────────────────────────────── */
 
 function escapeHtml(value: string): string {
@@ -44,13 +76,13 @@ function escapeHtml(value: string): string {
 
 export function buildCustomerConfirmationEmail(order: PaidOrder) {
   const fill = (s: string) => s.replaceAll("{firstName}", order.buyer.firstName || "there");
-  const eventDate = formatEventDate(eventConfig.eventStart);
-  const eventDetails = [
-    ["Event", `${eventConfig.orgName} ${eventConfig.eventName}`],
-    ["Date", eventDate],
-    ["Time", eventConfig.eventTime],
-    ...eventConfig.timingNotes.map((note) => ["", note]),
-    ["Venue", eventConfig.venue],
+  const { mealForm } = content;
+  const eventDetails: [string, string[]][] = [
+    ["Event", [`${eventConfig.orgName} ${eventConfig.eventName}`]],
+    ["Date", [formatEventDate(eventConfig.eventStart)]],
+    ["Time", [eventConfig.eventTime, ...eventConfig.timingNotes]],
+    ["Venue", content.venueLines],
+    ["Dress code", [content.dressCode]],
   ];
 
   const text = [
@@ -61,20 +93,29 @@ export function buildCustomerConfirmationEmail(order: PaidOrder) {
     ...order.lines.map((l) => `${l.quantity} × ${l.name} – ${formatPrice(l.total)}`),
     `Total paid: ${formatPrice(order.totalPaid)}`,
     "",
-    ...eventDetails.map(([label, value]) => (label ? `${label}: ${value}` : value)),
+    mealForm.heading.toUpperCase(),
+    mealForm.before,
+    mealForm.url,
     "",
-    ...content.afterSummary.flatMap((p) => [fill(p), ""]),
-    content.termsHeading.toUpperCase(),
-    ...content.terms.map((t) => `- ${fill(t)}`),
+    ...mealForm.after.flatMap((p) => [p, ""]),
+    content.eventHeading.toUpperCase(),
+    ...eventDetails.map(([label, lines]) => `${label}: ${lines.join("\n  ")}`),
+    "",
+    ...content.afterDetails.flatMap((p) => [p, ""]),
+    `Any queries or questions, please contact us via email at ${eventConfig.contactEmail}.`,
+    "",
+    content.socialsIntro,
+    ...eventConfig.socials.map((s) => `${s.label}: ${s.href}`),
     "",
     ...content.signOff,
-    "",
-    `Questions? Reply to this email or contact ${eventConfig.contactEmail}.`,
   ].join("\n");
 
   const p = (s: string) => `<p style="margin:0 0 14px">${escapeHtml(fill(s))}</p>`;
-  const row = (label: string, value: string) =>
-    `<tr><td style="padding:4px 16px 4px 0;color:#555;white-space:nowrap;vertical-align:top">${escapeHtml(label)}</td><td style="padding:4px 0">${escapeHtml(value)}</td></tr>`;
+  const h = (s: string) => `<h3 style="margin:24px 0 8px;font-size:16px">${escapeHtml(s)}</h3>`;
+  const link = (href: string, label: string) =>
+    `<a href="${escapeHtml(href)}" style="color:#0c2e24">${escapeHtml(label)}</a>`;
+  const row = (label: string, lines: string[]) =>
+    `<tr><td style="padding:4px 16px 4px 0;color:#555;white-space:nowrap;vertical-align:top">${escapeHtml(label)}</td><td style="padding:4px 0">${lines.map(escapeHtml).join("<br>")}</td></tr>`;
 
   const html = `
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a;max-width:560px">
@@ -85,22 +126,25 @@ export function buildCustomerConfirmationEmail(order: PaidOrder) {
     <p style="margin:2px 0 12px;font-size:22px;font-weight:bold;color:#0c2e24">${escapeHtml(order.reference)}</p>
     <table style="border-collapse:collapse;width:100%">
       ${order.lines
-        .map((l) => row(`${l.quantity} × ${l.name}`, formatPrice(l.total)))
+        .map((l) => row(`${l.quantity} × ${l.name}`, [formatPrice(l.total)]))
         .join("")}
-      ${row("Total paid", formatPrice(order.totalPaid))}
+      ${row("Total paid", [formatPrice(order.totalPaid)])}
     </table>
   </div>
+  ${h(mealForm.heading)}
+  ${p(mealForm.before)}
+  <p style="margin:0 0 14px"><a href="${escapeHtml(mealForm.url)}" style="display:inline-block;background:#0c2e24;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:bold">Fill in the Meal Choice form</a></p>
+  ${mealForm.after.map(p).join("")}
+  ${h(content.eventHeading)}
   <table style="border-collapse:collapse;margin:0 0 18px">
-    ${eventDetails.map(([label, value]) => row(label, value)).join("")}
+    ${eventDetails.map(([label, lines]) => row(label, lines)).join("")}
   </table>
-  ${content.afterSummary.map(p).join("")}
-  <h3 style="margin:24px 0 8px;font-size:16px">${escapeHtml(content.termsHeading)}</h3>
-  <ul style="margin:0 0 18px;padding-left:20px">
-    ${content.terms.map((t) => `<li style="margin:0 0 6px">${escapeHtml(fill(t))}</li>`).join("")}
-  </ul>
-  <p style="margin:0 0 4px">${content.signOff.map(escapeHtml).join("<br>")}</p>
-  <p style="margin:24px 0 0;color:#777;font-size:13px">Questions? Reply to this email or contact ${escapeHtml(eventConfig.contactEmail)}.</p>
+  ${content.afterDetails.map(p).join("")}
+  <p style="margin:0 0 14px">Any queries or questions, please contact us via email at ${link(`mailto:${eventConfig.contactEmail}`, eventConfig.contactEmail)}.</p>
+  <p style="margin:0 0 6px">${escapeHtml(content.socialsIntro)}</p>
+  <p style="margin:0 0 18px">${eventConfig.socials.map((s) => link(s.href, s.label)).join(" · ")}</p>
+  <p style="margin:0">${content.signOff.map(escapeHtml).join("<br>")}</p>
 </div>`;
 
-  return { subject: content.subject, text, html };
+  return { subject: content.subject, text, html, attachments };
 }

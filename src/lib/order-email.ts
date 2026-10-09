@@ -132,7 +132,7 @@ export async function sendOrderEmail(order: PaidOrder): Promise<void> {
 
 export async function sendCustomerConfirmationEmail(order: PaidOrder): Promise<void> {
   const { transporter, user } = createGmailTransport();
-  const { subject, text, html } = buildCustomerConfirmationEmail(order);
+  const { subject, text, html, attachments } = buildCustomerConfirmationEmail(order);
   await transporter.sendMail({
     from: { name: eventConfig.orgName, address: user },
     to: {
@@ -143,5 +143,6 @@ export async function sendCustomerConfirmationEmail(order: PaidOrder): Promise<v
     subject: `${order.livemode ? "" : "[TEST] "}${subject}`,
     text,
     html,
+    attachments,
   });
 }

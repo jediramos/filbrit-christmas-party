@@ -28,7 +28,7 @@ const content = {
     heading: "Meal choice form",
     url: "https://forms.gle/KKLqwQPxmQhh27B97",
     before:
-      "Please fill out your Meal Choice form as soon as possible. The deadline for submission is Friday 6th of November.",
+      "Please fill out your Meal Choice form as soon as possible. The deadline for submission is Friday 6th of November. If you have booked for more than one person, please ensure each member of your group fills out the Meal Choice form individually.",
     after: [
       "Let us know if there are any allergies or dietary requirements we need to be aware of so we can feed this back to the catering staff.",
       "If you or any of your group have any accessibility requirements, please let us know too, either via email or within the form.",

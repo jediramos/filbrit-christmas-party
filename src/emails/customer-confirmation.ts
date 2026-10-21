@@ -34,12 +34,11 @@ const content = {
       "If you or any of your group have any accessibility requirements, please let us know too, either via email or within the form.",
     ],
   },
-  // Only included when the order has kids tickets.
-  // PASTE THE KIDS MEAL CHOICE FORM LINK INTO `url` BELOW. While it's empty, `pending`
+  // Only included when the order has kids tickets. While `url` is empty, `pending`
   // is shown instead of the form button.
   kidsMealForm: {
     heading: "Kids meal choice form",
-    url: "",
+    url: "https://forms.gle/m4NKet3eFMtED26G9",
     before:
       "As your order includes kids tickets, please also fill out the Kids Meal Choice form for each child by Friday 6th of November.",
     button: "Fill in the Kids Meal Choice form",

@@ -8,7 +8,7 @@ Live site: [filbrit-christmas-party.vercel.app](https://filbrit-christmas-party.
 
 - **Hero:** the FilBrit logo and branding, a live countdown to the event (days, hours, minutes and seconds), an event description, a contact email for ticket enquiries, and links to Instagram and Facebook.
 - **When & Where:** the event date, time (TBC) and venue. The full address is only shared once tickets are confirmed.
-- **Ticket Releases:** a timeline of release stages (Early Bird, General Release, Final Release), each with a price and date range. The current stage is highlighted automatically based on today's date. Upcoming stages can hide their details until they open.
+- **Ticket Releases:** the Kids, Performers and Committee Family tickets, followed by a timeline of release stages (Early Bird, General Release, Final Release), each with a price and date range. The current stage is highlighted automatically based on today's date. Upcoming stages can hide their details until they open.
 - **Stay in the Loop:** tickets are sold by email, so this section points visitors to the contact address.
 - **Footer:** organisation name, social links and copyright.
 
@@ -82,6 +82,8 @@ Both are optional. See [`.env.example`](.env.example).
 | --- | --- |
 | `FORMSPREE_ENDPOINT` | Formspree form URL for the optional `/api/subscribe` endpoint. Without it, submissions are only logged to the server console. |
 | `NEXT_PUBLIC_SITE_URL` | The live site URL encoded into the QR code by `npm run qr`. |
+| `COMMITTEE_FAMILY_ACCESS_CODE` | Code that unlocks the Committee Family ticket. Empty means locked for everyone. |
+| `PERFORMERS_ACCESS_CODE` | Code that unlocks the Performers ticket. Empty means locked for everyone. |
 
 ## Updating event content
 
@@ -90,6 +92,14 @@ All event content lives in [`src/config/event.ts`](src/config/event.ts). Edit it
 - **Event details:** `eventStart` (drives the countdown), `eventTime`, `venue`, `address`, `contactEmail`, `socials`, and the blurbs for each section.
 - **Ticket stages:** each entry in `stages` has a name, price, `startsAt`/`endsAt` dates (ISO 8601 with a UK offset, e.g. `+01:00` in BST, `+00:00` in GMT), a display `dateLabel` and a description.
 - **Hiding upcoming stages:** set `hideDetailsUntilStart: true` on a stage to keep its price and dates hidden until it opens. This only applies while `enforceUpcomingStageLocks` is `true`. Set that to `false` to preview every stage while testing.
+
+### Kids, Performers and Committee Family tickets
+
+These three ticket types sit at the top of `stages` in [`src/config/event.ts`](src/config/event.ts), lowest price first, and are on sale until Final Release closes.
+
+- **Kids (£12.50)** is open to everyone but has `requiresAdult: true`, so it can only be bought in an order with at least one adult (non-kids) ticket. Both the checkout and `/api/checkout` enforce this.
+- **Performers (£22.50)** and **Committee Family (£30)** have `requiresAccessCode: true`. They show a **Click to enter code** button until the buyer clicks it in the checkout's Tickets step and enters the right code. The codes live in the `PERFORMERS_ACCESS_CODE` and `COMMITTEE_FAMILY_ACCESS_CODE` environment variables (one code per ticket type) and are checked again on the server when payment starts. To change a code, update it in Vercel and redeploy. If a variable is empty, that ticket stays locked.
+- **Kids meal form:** orders with a kids ticket get an extra Kids Meal Choice form section in the confirmation email. Paste the form link into `kidsMealForm.url` in [`src/emails/customer-confirmation.ts`](src/emails/customer-confirmation.ts). While it's empty, the section still appears but says the link will be sent shortly (`kidsMealForm.pending`) instead of showing the form button.
 
 ## Deploying to Vercel
 

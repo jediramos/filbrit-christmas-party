@@ -13,6 +13,7 @@ export type PaidOrder = {
     phone: string;
   };
   lines: { name: string; quantity: number; unitAmount: number; total: number }[];
+  includesKids: boolean;
   totalPaid: number;
   stripeFee: number | null;
   dashboardUrl: string | null;

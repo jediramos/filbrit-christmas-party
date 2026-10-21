@@ -1,4 +1,9 @@
-import { eventConfig, getStageStatus, type TicketStage } from "@/config/event";
+import {
+  eventConfig,
+  getStageStatus,
+  isAdultTicket,
+  type TicketStage,
+} from "@/config/event";
 
 export type BuyerDetails = {
   firstName: string;
@@ -49,15 +54,20 @@ export function validateBuyerDetails(details: BuyerDetails): BuyerDetailsErrors 
   return errors;
 }
 
-/** Only stages on sale at `now` are included; quantities are capped at the per-order limit. */
+/**
+ * Only stages on sale at `now` are included, and access-code stages only if their id is in `unlockedIds`.
+ * Quantities are capped at the per-order limit.
+ */
 export function buildOrderLines(
   quantities: TicketQuantities,
   now: Date = new Date(),
+  unlockedIds: string[] = [],
 ): OrderLine[] {
   let remaining = eventConfig.maxTicketsPerOrder;
   const lines: OrderLine[] = [];
   for (const stage of eventConfig.stages) {
     if (getStageStatus(stage, now) !== "current") continue;
+    if (stage.requiresAccessCode && !unlockedIds.includes(stage.id)) continue;
     const requested = Math.floor(Number(quantities[stage.id]) || 0);
     const quantity = Math.min(Math.max(requested, 0), remaining);
     if (quantity > 0) {
@@ -74,4 +84,14 @@ export function orderTotal(lines: OrderLine[]): number {
 
 export function orderTicketCount(lines: OrderLine[]): number {
   return lines.reduce((n, l) => n + l.quantity, 0);
+}
+
+export const KIDS_NEED_ADULT_MESSAGE =
+  "Kids tickets must be bought with at least one adult ticket.";
+
+export function kidsWithoutAdult(lines: OrderLine[]): boolean {
+  return (
+    lines.some((l) => l.stage.requiresAdult) &&
+    !lines.some((l) => isAdultTicket(l.stage))
+  );
 }

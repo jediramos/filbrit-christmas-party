@@ -66,6 +66,7 @@ async function handlePaidSession(stripe: Stripe, session: Stripe.Checkout.Sessio
         total: item.amount_total / 100,
       };
     }),
+    includesKids: metadata.ticketTypes?.split(",").includes("kids") ?? false,
     totalPaid: (session.amount_total ?? 0) / 100,
     stripeFee: paymentIntentId ? await getStripeFee(stripe, paymentIntentId) : null,
     dashboardUrl: paymentIntentId

@@ -10,6 +10,12 @@ export type TicketStage = {
   prizes: string[];
   /** When true, price/dates/copy stay hidden until startsAt. */
   hideDetailsUntilStart?: boolean;
+  /** When true, the ticket can only be bought after entering its access code (see `src/lib/access-codes.ts`). */
+  requiresAccessCode?: boolean;
+  /** When true, the ticket can only be bought alongside at least one adult ticket. */
+  requiresAdult?: boolean;
+  /** When true, the ticket is left off the Ticket Releases timeline and only offered in the Buy Tickets flow. */
+  hideFromTimeline?: boolean;
 };
 
 export type EventConfig = {
@@ -73,9 +79,48 @@ export const eventConfig: EventConfig = {
   detailsBlurb:
     "Save the date — we look forward to celebrating with you!",
   ticketsBlurb:
-    "Tickets are released in stages, and earlier releases offer the best value — grab yours below while they last!",
+    "Adult tickets are released in stages, and earlier releases offer the best value — grab yours below while they last! Kids, performer and committee family tickets are also available.",
   maxTicketsPerOrder: 10,
   stages: [
+    {
+      id: "kids",
+      name: "Kids",
+      startsAt: "2026-10-21T00:00:00+01:00",
+      endsAt: "2026-11-06T23:59:59+00:00",
+      price: 12.5,
+      dateLabel: "Available until November 6th",
+      description:
+        "Children's tickets with a kids' meal. Must be bought with at least one adult ticket.",
+      prizes: [],
+      requiresAdult: true,
+      hideFromTimeline: true,
+    },
+    {
+      id: "performers",
+      name: "Performers",
+      startsAt: "2026-10-21T00:00:00+01:00",
+      endsAt: "2026-11-06T23:59:59+00:00",
+      price: 22.5,
+      dateLabel: "Available until November 6th",
+      description:
+        "For those performing on the night. An access code is needed to buy this ticket.",
+      prizes: [],
+      requiresAccessCode: true,
+      hideFromTimeline: true,
+    },
+    {
+      id: "committee-family",
+      name: "Committee Family",
+      startsAt: "2026-10-21T00:00:00+01:00",
+      endsAt: "2026-11-06T23:59:59+00:00",
+      price: 30,
+      dateLabel: "Available until November 6th",
+      description:
+        "For committee members' families. An access code is needed to buy this ticket.",
+      prizes: [],
+      requiresAccessCode: true,
+      hideFromTimeline: true,
+    },
     {
       id: "early-bird",
       name: "Early Bird",
@@ -114,18 +159,8 @@ export const eventConfig: EventConfig = {
   ],
 };
 
-export function getActiveStage(
-  stages: TicketStage[],
-  now: Date = new Date(),
-): TicketStage | null {
-  const t = now.getTime();
-  return (
-    stages.find((s) => {
-      const start = new Date(s.startsAt).getTime();
-      const end = new Date(s.endsAt).getTime();
-      return t >= start && t <= end;
-    }) ?? null
-  );
+export function isAdultTicket(stage: TicketStage): boolean {
+  return !stage.requiresAdult;
 }
 
 export function getStageStatus(

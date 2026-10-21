@@ -64,7 +64,12 @@ export function StagesTimeline({ stages }: Props) {
                   {formatPrice(stage.price)}
                 </span>
               )}
-              {status === "current" && (
+              {status === "current" && stage.requiresAccessCode && (
+                <span className="shrink-0 rounded-sm border border-[var(--gold)]/60 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--gold)]">
+                  Access code only
+                </span>
+              )}
+              {status === "current" && !stage.requiresAccessCode && (
                 <span className="stage-badge shrink-0 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--evergreen-deep)]">
                   On sale now
                 </span>

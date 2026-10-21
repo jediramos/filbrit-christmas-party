@@ -166,7 +166,9 @@ export default function Home() {
           </p>
 
           <div className="mt-12 w-max min-w-0 max-w-full self-center text-left">
-            <StagesTimeline stages={eventConfig.stages} />
+            <StagesTimeline
+              stages={eventConfig.stages.filter((s) => !s.hideFromTimeline)}
+            />
           </div>
 
           <div id="buy-tickets" className="mt-12 scroll-mt-[60vh]">

@@ -19,6 +19,8 @@ import {
   buildOrderLines,
   CHECKOUT_DRAFT_KEY,
   EMPTY_BUYER_DETAILS,
+  KIDS_NEED_ADULT_MESSAGE,
+  kidsWithoutAdult,
   orderTicketCount,
   orderTotal,
   validateBuyerDetails,
@@ -36,7 +38,12 @@ const STEPS: { id: Step; label: string }[] = [
   { id: "review", label: "Review" },
 ];
 
-type CheckoutDraft = { quantities: TicketQuantities; details: Details };
+type CheckoutDraft = {
+  quantities: TicketQuantities;
+  details: Details;
+  accessCodes: string[];
+  unlockedIds: string[];
+};
 
 function loadDraft(): CheckoutDraft | null {
   try {
@@ -46,6 +53,8 @@ function loadDraft(): CheckoutDraft | null {
     return {
       quantities: draft.quantities ?? {},
       details: { ...EMPTY_BUYER_DETAILS, ...draft.details },
+      accessCodes: draft.accessCodes ?? [],
+      unlockedIds: draft.unlockedIds ?? [],
     };
   } catch {
     return null;
@@ -137,6 +146,12 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
   const [details, setDetails] = useState<Details>(
     draft?.details ?? EMPTY_BUYER_DETAILS,
   );
+  const [accessCodes, setAccessCodes] = useState<string[]>(
+    draft?.accessCodes ?? [],
+  );
+  const [unlockedIds, setUnlockedIds] = useState<string[]>(
+    draft?.unlockedIds ?? [],
+  );
   const [errors, setErrors] = useState<DetailsErrors>({});
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsError, setTermsError] = useState<string | null>(null);
@@ -147,17 +162,37 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
     try {
       window.sessionStorage.setItem(
         CHECKOUT_DRAFT_KEY,
-        JSON.stringify({ quantities, details }),
+        JSON.stringify({ quantities, details, accessCodes, unlockedIds }),
       );
     } catch {
       // Storage can be unavailable (e.g. private browsing); the draft just won't persist.
     }
-  }, [quantities, details]);
+  }, [quantities, details, accessCodes, unlockedIds]);
 
   const stages = eventConfig.stages;
-  const orderLines = buildOrderLines(quantities, now);
+  const orderLines = buildOrderLines(quantities, now, unlockedIds);
   const ticketCount = orderTicketCount(orderLines);
   const total = orderTotal(orderLines);
+  const needsAdult = kidsWithoutAdult(orderLines);
+
+  /** Resolves to the ticket ids the code unlocked, or throws with a message to show. */
+  const unlock = async (code: string): Promise<string[]> => {
+    const res = await fetch("/api/access-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    }).catch(() => null);
+    const data: { stageIds?: string[]; error?: string } = res
+      ? await res.json().catch(() => ({}))
+      : {};
+    if (!res?.ok || !data.stageIds?.length) {
+      throw new Error(data.error || "We couldn't check that code. Please try again.");
+    }
+    const stageIds = data.stageIds;
+    setAccessCodes((prev) => (prev.includes(code) ? prev : [...prev, code]));
+    setUnlockedIds((prev) => [...new Set([...prev, ...stageIds])]);
+    return stageIds;
+  };
 
   const startPayment = async () => {
     setPaying(true);
@@ -166,7 +201,13 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantities, details }),
+        body: JSON.stringify({
+          quantities: Object.fromEntries(
+            orderLines.map((l) => [l.stage.id, l.quantity]),
+          ),
+          details,
+          accessCodes,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         url?: string;
@@ -280,7 +321,10 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
             now={now}
             quantities={quantities}
             ticketCount={ticketCount}
+            unlockedIds={unlockedIds}
+            needsAdult={needsAdult}
             onChange={changeQuantity}
+            onUnlock={unlock}
           />
         )}
         {step === "details" && (
@@ -300,6 +344,7 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
             orderLines={orderLines}
             total={total}
             details={details}
+            needsAdult={needsAdult}
             paymentError={paymentError}
             onEditTickets={() => setStep("tickets")}
             onEditDetails={() => setStep("details")}
@@ -328,7 +373,7 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
           )}
           {step === "tickets" && (
             <PrimaryButton
-              disabled={ticketCount === 0}
+              disabled={ticketCount === 0 || needsAdult}
               onClick={() => setStep("details")}
             >
               Next
@@ -341,7 +386,7 @@ function Checkout({ now, testMode, onClose }: CheckoutProps) {
           )}
           {step === "review" && (
             <PrimaryButton
-              disabled={paying || ticketCount === 0}
+              disabled={paying || ticketCount === 0 || needsAdult}
               onClick={startPayment}
             >
               {paying ? "Redirecting…" : "Continue to payment"}
@@ -383,7 +428,10 @@ type TicketsStepProps = {
   now: Date;
   quantities: Record<string, number>;
   ticketCount: number;
+  unlockedIds: string[];
+  needsAdult: boolean;
   onChange: (stageId: string, delta: number) => void;
+  onUnlock: (code: string) => Promise<string[]>;
 };
 
 function TicketsStep({
@@ -391,9 +439,13 @@ function TicketsStep({
   now,
   quantities,
   ticketCount,
+  unlockedIds,
+  needsAdult,
   onChange,
+  onUnlock,
 }: TicketsStepProps) {
   const atLimit = ticketCount >= eventConfig.maxTicketsPerOrder;
+  const [codeEntryFor, setCodeEntryFor] = useState<string | null>(null);
 
   return (
     <section aria-labelledby="select-tickets-heading">
@@ -407,77 +459,103 @@ function TicketsStep({
         {stages.map((stage) => {
           const status = getStageStatus(stage, now);
           const quantity = quantities[stage.id] ?? 0;
+          const locked =
+            status === "current" &&
+            Boolean(stage.requiresAccessCode) &&
+            !unlockedIds.includes(stage.id);
 
           return (
-            <li
-              key={stage.id}
-              className="flex items-start justify-between gap-4 px-4 py-4"
-            >
-              <div className="min-w-0">
-                <p
-                  className={`font-display text-xl ${
-                    status === "current"
-                      ? "text-[var(--ivory)]"
-                      : "text-[var(--mist)]"
-                  }`}
-                >
-                  {stage.name}
-                </p>
-                <p
-                  className={`mt-0.5 font-display text-lg ${
-                    status === "current"
-                      ? "text-[var(--gold)]"
-                      : "text-[var(--gold-dim)]"
-                  }`}
-                >
-                  {formatPrice(stage.price)}
-                </p>
-                <p className="mt-1 text-sm text-[var(--mist)]">
-                  {stage.description}
-                </p>
-              </div>
-
-              {status === "current" ? (
-                <div className="flex shrink-0 items-center gap-2">
-                  <StepperButton
-                    label={`${stage.name}: remove 1 ticket`}
-                    disabled={quantity === 0}
-                    onClick={() => onChange(stage.id, -1)}
+            <li key={stage.id} className="px-4 py-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p
+                    className={`font-display text-xl ${
+                      status === "current"
+                        ? "text-[var(--ivory)]"
+                        : "text-[var(--mist)]"
+                    }`}
                   >
-                    −
-                  </StepperButton>
-                  <span
-                    className="w-6 text-center tabular-nums text-[var(--ivory)]"
-                    aria-live="polite"
-                    aria-label={`${quantity} ${stage.name} tickets selected`}
+                    {stage.name}
+                  </p>
+                  <p
+                    className={`mt-0.5 font-display text-lg ${
+                      status === "current"
+                        ? "text-[var(--gold)]"
+                        : "text-[var(--gold-dim)]"
+                    }`}
                   >
-                    {quantity}
-                  </span>
-                  <StepperButton
-                    label={`${stage.name}: add 1 ticket`}
-                    disabled={atLimit}
-                    onClick={() => onChange(stage.id, 1)}
-                  >
-                    +
-                  </StepperButton>
+                    {formatPrice(stage.price)}
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--mist)]">
+                    {stage.description}
+                  </p>
                 </div>
-              ) : (
-                <span
-                  className={`shrink-0 rounded-sm px-2 py-1 text-[0.65rem] uppercase tracking-[0.16em] ${
-                    status === "past"
-                      ? "bg-[var(--crimson)] text-[var(--ivory)]"
-                      : "border border-[var(--crimson-soft)]/60 text-[var(--crimson-soft)]"
-                  }`}
-                >
-                  {status === "past"
-                    ? "Closed"
-                    : `Opens ${formatOpensOn(stage.startsAt)}`}
-                </span>
+
+                {locked ? (
+                  <button
+                    type="button"
+                    aria-expanded={codeEntryFor === stage.id}
+                    onClick={() =>
+                      setCodeEntryFor(codeEntryFor === stage.id ? null : stage.id)
+                    }
+                    className="shrink-0 rounded-sm border border-[var(--gold)]/60 px-2 py-1 text-[0.65rem] uppercase tracking-[0.16em] text-[var(--gold)] transition hover:bg-[var(--gold)]/10"
+                  >
+                    Click to enter code
+                  </button>
+                ) : status === "current" ? (
+                  <div className="flex shrink-0 items-center gap-2">
+                    <StepperButton
+                      label={`${stage.name}: remove 1 ticket`}
+                      disabled={quantity === 0}
+                      onClick={() => onChange(stage.id, -1)}
+                    >
+                      −
+                    </StepperButton>
+                    <span
+                      className="w-6 text-center tabular-nums text-[var(--ivory)]"
+                      aria-live="polite"
+                      aria-label={`${quantity} ${stage.name} tickets selected`}
+                    >
+                      {quantity}
+                    </span>
+                    <StepperButton
+                      label={`${stage.name}: add 1 ticket`}
+                      disabled={atLimit}
+                      onClick={() => onChange(stage.id, 1)}
+                    >
+                      +
+                    </StepperButton>
+                  </div>
+                ) : (
+                  <span
+                    className={`shrink-0 rounded-sm px-2 py-1 text-[0.65rem] uppercase tracking-[0.16em] ${
+                      status === "past"
+                        ? "bg-[var(--crimson)] text-[var(--ivory)]"
+                        : "border border-[var(--crimson-soft)]/60 text-[var(--crimson-soft)]"
+                    }`}
+                  >
+                    {status === "past"
+                      ? "Closed"
+                      : `Opens ${formatOpensOn(stage.startsAt)}`}
+                  </span>
+                )}
+              </div>
+              {locked && codeEntryFor === stage.id && (
+                <AccessCodeForm
+                  stage={stage}
+                  onUnlock={onUnlock}
+                  onDone={() => setCodeEntryFor(null)}
+                />
               )}
             </li>
           );
         })}
       </ul>
+      {needsAdult && (
+        <p role="alert" className="mt-3 text-sm text-[var(--crimson-soft)]">
+          {KIDS_NEED_ADULT_MESSAGE}
+        </p>
+      )}
       {atLimit && (
         <p className="mt-3 text-sm text-[var(--mist)]">
           You can buy up to {eventConfig.maxTicketsPerOrder} tickets per order.
@@ -497,6 +575,80 @@ function TicketsStep({
         .
       </p>
     </section>
+  );
+}
+
+function AccessCodeForm({
+  stage,
+  onUnlock,
+  onDone,
+}: {
+  stage: TicketStage;
+  onUnlock: (code: string) => Promise<string[]>;
+  onDone: () => void;
+}) {
+  const inputId = useId();
+  const [code, setCode] = useState("");
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = code.trim();
+    if (!trimmed) {
+      setError("Enter your access code.");
+      return;
+    }
+    setChecking(true);
+    setError(null);
+    try {
+      const stageIds = await onUnlock(trimmed);
+      if (stageIds.includes(stage.id)) {
+        onDone();
+      } else {
+        setError(`That code unlocks a different ticket, not ${stage.name}.`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "That access code isn't valid.");
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} noValidate className="mt-3">
+      <label htmlFor={inputId} className="text-sm text-[var(--ivory-soft)]">
+        Enter access code
+      </label>
+      <div className="mt-1.5 flex gap-2">
+        <input
+          id={inputId}
+          type="text"
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          autoFocus
+          value={code}
+          onChange={(e) => {
+            setCode(e.target.value);
+            if (error) setError(null);
+          }}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? `${inputId}-error` : undefined}
+          className={`min-w-0 flex-1 rounded-md border bg-[var(--night)]/60 px-3 py-2 text-[var(--ivory)] outline-none transition focus:border-[var(--gold)] ${
+            error ? "border-[var(--crimson-soft)]" : "border-[var(--pine-line)]"
+          }`}
+        />
+        <PrimaryButton type="submit" disabled={checking}>
+          {checking ? "Checking…" : "Unlock"}
+        </PrimaryButton>
+      </div>
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-sm text-[var(--crimson-soft)]">
+          {error}
+        </p>
+      )}
+    </form>
   );
 }
 
@@ -672,6 +824,7 @@ type ReviewStepProps = {
   orderLines: OrderLine[];
   total: number;
   details: Details;
+  needsAdult: boolean;
   paymentError: string | null;
   onEditTickets: () => void;
   onEditDetails: () => void;
@@ -681,6 +834,7 @@ function ReviewStep({
   orderLines,
   total,
   details,
+  needsAdult,
   paymentError,
   onEditTickets,
   onEditDetails,
@@ -730,6 +884,10 @@ function ReviewStep({
         <p className="text-sm text-[var(--crimson-soft)]">
           The tickets you selected are no longer on sale. Please choose again.
         </p>
+      )}
+
+      {needsAdult && (
+        <p className="text-sm text-[var(--crimson-soft)]">{KIDS_NEED_ADULT_MESSAGE}</p>
       )}
 
       {paymentError && (

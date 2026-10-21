@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { eventConfig, formatEventDate } from "@/config/event";
+import { unlockedStageIds } from "@/lib/access-codes";
 import {
   buildOrderLines,
+  KIDS_NEED_ADULT_MESSAGE,
+  kidsWithoutAdult,
   orderTicketCount,
   validateBuyerDetails,
   type BuyerDetails,
@@ -12,6 +15,7 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe";
 type Body = {
   quantities?: unknown;
   details?: unknown;
+  accessCodes?: unknown;
 };
 
 const DETAIL_KEYS: (keyof BuyerDetails)[] = [
@@ -43,6 +47,11 @@ function parseQuantities(raw: unknown): TicketQuantities | null {
     if (typeof value === "number") quantities[id] = value;
   }
   return quantities;
+}
+
+function parseAccessCodes(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((code): code is string => typeof code === "string").slice(0, 10);
 }
 
 function siteOrigin(request: Request): string {
@@ -81,12 +90,29 @@ export async function POST(request: Request) {
     );
   }
 
-  const lines = buildOrderLines(quantities);
+  const unlockedIds = unlockedStageIds(parseAccessCodes(body.accessCodes));
+  const stillLocked = eventConfig.stages.some(
+    (stage) =>
+      stage.requiresAccessCode &&
+      (quantities[stage.id] ?? 0) > 0 &&
+      !unlockedIds.includes(stage.id),
+  );
+  if (stillLocked) {
+    return NextResponse.json(
+      { error: "Your access code is no longer valid. Please remove those tickets or contact us." },
+      { status: 403 },
+    );
+  }
+
+  const lines = buildOrderLines(quantities, new Date(), unlockedIds);
   if (lines.length === 0) {
     return NextResponse.json(
       { error: "The tickets you selected are no longer on sale. Please choose again." },
       { status: 409 },
     );
+  }
+  if (kidsWithoutAdult(lines)) {
+    return NextResponse.json({ error: KIDS_NEED_ADULT_MESSAGE }, { status: 400 });
   }
 
   const buyer = {
@@ -113,7 +139,7 @@ export async function POST(request: Request) {
         },
       })),
       customer_email: buyer.email,
-      metadata: buyer,
+      metadata: { ...buyer, ticketTypes: lines.map((l) => l.stage.id).join(",") },
       payment_intent_data: {
         description: `${eventLabel} – ${orderTicketCount(lines)} ticket(s)`,
         receipt_email: buyer.email,

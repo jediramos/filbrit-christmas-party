@@ -34,6 +34,18 @@ const content = {
       "If you or any of your group have any accessibility requirements, please let us know too, either via email or within the form.",
     ],
   },
+  // Only included when the order has kids tickets.
+  // PASTE THE KIDS MEAL CHOICE FORM LINK INTO `url` BELOW. While it's empty, `pending`
+  // is shown instead of the form button.
+  kidsMealForm: {
+    heading: "Kids meal choice form",
+    url: "",
+    before:
+      "As your order includes kids tickets, please also fill out the Kids Meal Choice form for each child by Friday 6th of November.",
+    button: "Fill in the Kids Meal Choice form",
+    pending:
+      "The link to the Kids Meal Choice form will be sent to you shortly.",
+  },
   eventHeading: "Event details",
   dressCode:
     "Formal attire – suits / cocktail dresses. We highly encourage any and all traditional / cultural wear!",
@@ -76,7 +88,8 @@ function escapeHtml(value: string): string {
 
 export function buildCustomerConfirmationEmail(order: PaidOrder) {
   const fill = (s: string) => s.replaceAll("{firstName}", order.buyer.firstName || "there");
-  const { mealForm } = content;
+  const { mealForm, kidsMealForm } = content;
+  const kidsMealFormUrl = kidsMealForm.url.trim();
   const eventDetails: [string, string[]][] = [
     ["Event", [`${eventConfig.orgName} ${eventConfig.eventName}`]],
     ["Date", [formatEventDate(eventConfig.eventStart)]],
@@ -97,6 +110,14 @@ export function buildCustomerConfirmationEmail(order: PaidOrder) {
     mealForm.before,
     mealForm.url,
     "",
+    ...(order.includesKids
+      ? [
+          kidsMealForm.heading.toUpperCase(),
+          kidsMealForm.before,
+          kidsMealFormUrl || kidsMealForm.pending,
+          "",
+        ]
+      : []),
     ...mealForm.after.flatMap((p) => [p, ""]),
     content.eventHeading.toUpperCase(),
     ...eventDetails.map(([label, lines]) => `${label}: ${lines.join("\n  ")}`),
@@ -114,6 +135,8 @@ export function buildCustomerConfirmationEmail(order: PaidOrder) {
   const h = (s: string) => `<h3 style="margin:24px 0 8px;font-size:16px">${escapeHtml(s)}</h3>`;
   const link = (href: string, label: string) =>
     `<a href="${escapeHtml(href)}" style="color:#0c2e24">${escapeHtml(label)}</a>`;
+  const button = (href: string, label: string) =>
+    `<p style="margin:0 0 14px"><a href="${escapeHtml(href)}" style="display:inline-block;background:#0c2e24;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:bold">${escapeHtml(label)}</a></p>`;
   const row = (label: string, lines: string[]) =>
     `<tr><td style="padding:4px 16px 4px 0;color:#555;white-space:nowrap;vertical-align:top">${escapeHtml(label)}</td><td style="padding:4px 0">${lines.map(escapeHtml).join("<br>")}</td></tr>`;
 
@@ -133,7 +156,16 @@ export function buildCustomerConfirmationEmail(order: PaidOrder) {
   </div>
   ${h(mealForm.heading)}
   ${p(mealForm.before)}
-  <p style="margin:0 0 14px"><a href="${escapeHtml(mealForm.url)}" style="display:inline-block;background:#0c2e24;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:bold">Fill in the Meal Choice form</a></p>
+  ${button(mealForm.url, "Fill in the Meal Choice form")}
+  ${
+    order.includesKids
+      ? `${h(kidsMealForm.heading)}${p(kidsMealForm.before)}${
+          kidsMealFormUrl
+            ? button(kidsMealFormUrl, kidsMealForm.button)
+            : p(kidsMealForm.pending)
+        }`
+      : ""
+  }
   ${mealForm.after.map(p).join("")}
   ${h(content.eventHeading)}
   <table style="border-collapse:collapse;margin:0 0 18px">
